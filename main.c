@@ -16,7 +16,7 @@ static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
   }
 }
 
-void server_thread(void) {
+void *server_thread(void *) {
   struct mg_mgr mgr;                                
   mg_mgr_init(&mgr);                                      // Init manager
   mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);  // Setup listener
