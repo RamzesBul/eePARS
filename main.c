@@ -1,4 +1,7 @@
 #include <mongoose.h>
+#include <pthread.h>
+#include <time.h>
+#include <vkclient.h>
 
 static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
   if (ev == MG_EV_HTTP_MSG) {
@@ -13,11 +16,19 @@ static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
   }
 }
 
-int main() {
+void server_thread(void) {
   struct mg_mgr mgr;                                
   mg_mgr_init(&mgr);                                      // Init manager
   mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);  // Setup listener
   for (;;) mg_mgr_poll(&mgr, 1000);                       // Infinite event loop
+}
+
+int main() {
+  pthread_t serverThread;
+  pthread_create(&serverThread, NULL, server_thread, NULL);
+  sleep(5);
+  client_request();
+  getc(stdin);
 
   return 0;
 }
