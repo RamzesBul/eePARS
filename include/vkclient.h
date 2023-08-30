@@ -1,1 +1,0 @@
-void client_request(void);
