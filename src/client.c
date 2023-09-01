@@ -1,5 +1,10 @@
 #include <client.h>
 
+typedef struct {
+    const char *url;
+    bool done;
+} fn_data_t;
+
 /**
  * @brief Callback function for client.
  *
@@ -8,37 +13,49 @@
  * @param ev_data Event data @b (reserved).
  * @param fn_data Function data.
  */
-static void default_request_callback(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
-    if (ev == MG_EV_OPEN) {
-        c->is_hexdumping = 1; // Enable hexdumping for connection.
-    } else if (ev == MG_EV_ERROR) {
-        MG_ERROR(("%p %s", c->fd, (char *)ev_data)); // Log error message.
-    } else if (ev == MG_EV_WS_OPEN) {
-        mg_ws_send(c, "hello", 5, WEBSOCKET_OP_TEXT); // Send message.
-    } else if (ev == MG_EV_WS_MSG) {
-        struct mg_ws_message *wm = (struct mg_ws_message *)ev_data;          // Get message.
-        printf("GOT ECHO REPLY: [%.*s]\n", (int)wm->data.len, wm->data.ptr); // Print message.
-    }
+static void default_request_callback(struct mg_connection *c, int ev,
+                                     void *ev_data, void *fn_data) {
+    fn_data_t *data = (fn_data_t*) fn_data;
 
-    if (ev == MG_EV_ERROR || ev == MG_EV_CLOSE || ev == MG_EV_WS_MSG) {
-        *(bool *)fn_data = true; // Signal that we're done.
+    if (ev == MG_EV_CONNECT) {
+        // Connected to server. Extract host name from URL
+        struct mg_str host = mg_url_host(data->url);
+
+        // If s_url is https://, tell client connection to use TLS
+        if (mg_url_is_ssl(data->url)) {
+            struct mg_tls_opts opts = {.ca = "../cred/_.vk.crt", .srvname = host};
+            mg_tls_init(c, &opts);
+        }
+
+        // Send request
+        mg_printf(c,
+                  "GET %s HTTP/1.0\r\n"
+                  "Host: %.*s\r\n"
+                  "\r\n",
+                  mg_url_uri(data->url), (int)host.len, host.ptr);
+    } else if (ev == MG_EV_HTTP_MSG) {
+        // Response is received. Print it
+        struct mg_http_message *hm = (struct mg_http_message *)ev_data;
+        printf("%.*s", (int)hm->message.len, hm->message.ptr);
+        c->is_closing = 1;       // Tell mongoose to close this connection
+        data->done = true; // Tell event loop to stop
+    } else if (ev == MG_EV_ERROR) {
+        data->done = true; // Error, tell event loop to stop
     }
 }
 
-void request_get(const char *url, mg_event_handler_t callback_function) {
-    if (!callback_function)
-        callback_function = default_request_callback; // Set default callback function.
+void request_get(const char *url) {
+    fn_data_t fn_data = {.url = url, .done = false};
 
     mg_log_set(MG_LL_DEBUG); // Set log level.
 
     struct mg_mgr mgr; // Event manager.
     mg_mgr_init(&mgr); // Initialise event manager.
 
-    bool done = false; // Event handler flips it to true.
-
-    struct mg_connection *c;                                      // Client connection.
-    c = mg_ws_connect(&mgr, url, callback_function, &done, NULL); // Create client.
-    while (c && done == false)
+    struct mg_connection *c; // Client connection.
+    c = mg_http_connect(&mgr, url, default_request_callback,
+                        &fn_data); // Create client.
+    while (c && fn_data.done == false)
         mg_mgr_poll(&mgr, 1000); // Wait for echo.
 
     mg_mgr_free(&mgr); // Deallocate resources.
