@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(eePARS VERSION 0.1.0)
 
 # Script variables
-set(SOURCES main.c src/mongoose.c src/vkclient.c)
+set(SOURCES "main.c" "src/mongoose.c" "src/client.c" "src/server.c")
 
 # Script properties
 add_executable(${PROJECT_NAME} ${SOURCES})
