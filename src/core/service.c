@@ -3,7 +3,7 @@
 p_services register_services(void) {
     p_services this = malloc(sizeof(services_t));
 
-    this->credentials = register_credentials("credentials.json");
+    this->credentials = register_credentials("../credentials/credentials.json");
     this->server = register_server(this->credentials->uri);
 
     return this;

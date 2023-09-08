@@ -1,4 +1,5 @@
 #include <core/server.h>
+#include "stdio.h"
 
 typedef struct {
     const char *uri;
@@ -34,7 +35,7 @@ p_server register_server(const char *uri) {
 }
 
 void release_server(p_server server) {
-    pthread_join(server->server_thread, NULL);
+    pthread_join(server->server_thread, &(void*){NULL});
     mg_mgr_free(&server->mgr);
     free(server);
 }
@@ -45,6 +46,8 @@ static void *server_run(void *args) {
     mg_mgr_init(&serverParams->server->mgr);
     mg_http_listen(&serverParams->server->mgr, serverParams->uri, server_event_handler, NULL);
     for (;;) mg_mgr_poll(&serverParams->server->mgr, 1000);
+
+    pthread_exit(NULL);
 }
 
 static void server_event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
