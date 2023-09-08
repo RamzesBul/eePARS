@@ -1,5 +1,4 @@
 #include <core/server.h>
-#include "stdio.h"
 
 typedef struct {
     const char *uri;
