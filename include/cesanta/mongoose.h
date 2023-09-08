@@ -1357,9 +1357,9 @@ void mg_tls_handshake(struct mg_connection *);
 
 
 #if MG_ENABLE_MBEDTLS
-#include <mbedtls/debug.h>
-#include <mbedtls/net_sockets.h>
-#include <mbedtls/ssl.h>
+#include "mbedtls/debug.h"
+#include "mbedtls/net_sockets.h"
+#include "mbedtls/ssl.h"
 
 struct mg_tls {
   char *cafile;             // CA certificate path

@@ -1,4 +1,14 @@
-#include <client.h>
+#include <core/client.h>
+
+p_client register_client(void) {
+    p_client this = malloc(sizeof(client_t));
+
+    return this;
+}
+
+void release_client(p_client this) {
+    free(this);
+}
 
 typedef struct {
     const char *url;
