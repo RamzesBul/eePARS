@@ -1,3 +1,9 @@
+/**
+ * @file client.h
+ * @brief Client to APIs.
+ * @date 2023-09-09
+ */
+
 #ifndef EEPARS_VKCLIENT_H
 #define EEPARS_VKCLIENT_H
 
@@ -24,5 +30,7 @@ p_client register_client(void);
  * @param this Client to release.
  */
 void release_client(p_client this);
+
+char * request_get(const char *url);
 
 #endif //EEPARS_VKCLIENT_H

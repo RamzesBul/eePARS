@@ -29,8 +29,8 @@ extern "C" {
 #include <limits.h>
 
 #if defined(_WIN32) && _MSC_VER < 1700
-typedef int bool;
-enum { false = 0, true = 1 };
+typedef int frozen_bool;
+enum { frozen_false = 0, frozen_true = 1 };
 #else
 #include <stdbool.h>
 #endif
@@ -78,7 +78,7 @@ struct json_token {
  *   - For the first value in the JSON string;
  *   - For events JSON_TYPE_OBJECT_END and JSON_TYPE_ARRAY_END
  *
- * E.g. for the input `{ "foo": 123, "bar": [ 1, 2, { "baz": true } ] }`,
+ * E.g. for the input `{ "foo": 123, "bar": [ 1, 2, { "baz": frozen_true } ] }`,
  * the sequence of callback invocations will be as follows:
  *
  * - type: JSON_TYPE_OBJECT_START, name: NULL, path: "", value: NULL
@@ -87,13 +87,13 @@ struct json_token {
  * - type: JSON_TYPE_NUMBER, name: "0", path: ".bar[0]", value: "1"
  * - type: JSON_TYPE_NUMBER, name: "1", path: ".bar[1]", value: "2"
  * - type: JSON_TYPE_OBJECT_START, name: "2", path: ".bar[2]", value: NULL
- * - type: JSON_TYPE_TRUE, name: "baz", path: ".bar[2].baz", value: "true"
+ * - type: JSON_TYPE_TRUE, name: "baz", path: ".bar[2].baz", value: "frozen_true"
  * - type: JSON_TYPE_OBJECT_END, name: NULL, path: ".bar[2]", value: "{ \"baz\":
- *true }"
+ *frozen_true }"
  * - type: JSON_TYPE_ARRAY_END, name: NULL, path: ".bar", value: "[ 1, 2, {
- *\"baz\": true } ]"
+ *\"baz\": frozen_true } ]"
  * - type: JSON_TYPE_OBJECT_END, name: NULL, path: "", value: "{ \"foo\": 123,
- *\"bar\": [ 1, 2, { \"baz\": true } ] }"
+ *\"bar\": [ 1, 2, { \"baz\": frozen_true } ] }"
  */
 typedef void (*json_walk_callback_t)(void *callback_data, const char *name,
                                      size_t name_len, const char *path,
@@ -163,7 +163,7 @@ typedef int (*json_printf_callback_t)(struct json_out *, va_list *ap);
 /*
  * Generate formatted output into a given sting buffer.
  * This is a superset of printf() function, with extra format specifiers:
- *  - `%B` print json boolean, `true` or `false`. Accepts an `int`.
+ *  - `%B` print json boolean, `frozen_true` or `frozen_false`. Accepts an `int`.
  *  - `%Q` print quoted escaped string or `null`. Accepts a `const char *`.
  *  - `%.*Q` same as `%Q`, but with length. Accepts `int`, `const char *`
  *  - `%V` print quoted base64-encoded string. Accepts a `const char *`, `int`.
@@ -213,8 +213,8 @@ int json_printf_array(struct json_out *, va_list *ap);
  * 1. Object keys in the format string may be not quoted, e.g. "{key: %d}"
  * 2. Order of keys in an object is irrelevant.
  * 3. Several extra format specifiers are supported:
- *    - %B: consumes `int *` (or `char *`, if `sizeof(bool) == sizeof(char)`),
- *       expects boolean `true` or `false`.
+ *    - %B: consumes `int *` (or `char *`, if `sizeof(frozen_bool) == sizeof(char)`),
+ *       expects boolean `frozen_true` or `frozen_false`.
  *    - %Q: consumes `char **`, expects quoted, JSON-encoded string. Scanned
  *       string is malloc-ed, caller must free() the string.
  *    - %V: consumes `char **`, `int *`. Expects base64-encoded string.

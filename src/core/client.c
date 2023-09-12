@@ -13,6 +13,7 @@ void release_client(p_client this) {
 typedef struct {
     const char *url;
     bool done;
+    char *response;
 } fn_data_t;
 
 /**
@@ -33,7 +34,7 @@ static void default_request_callback(struct mg_connection *c, int ev,
 
         // If s_url is https://, tell client connection to use TLS
         if (mg_url_is_ssl(data->url)) {
-            struct mg_tls_opts opts = {.ca = "../cred/_.vk.crt", .srvname = host};
+            struct mg_tls_opts opts = {.ca = "../credentials/_.vk.crt", .srvname = host};
             mg_tls_init(c, &opts);
         }
 
@@ -46,7 +47,8 @@ static void default_request_callback(struct mg_connection *c, int ev,
     } else if (ev == MG_EV_HTTP_MSG) {
         // Response is received. Print it
         struct mg_http_message *hm = (struct mg_http_message *)ev_data;
-        printf("%.*s", (int)hm->message.len, hm->message.ptr);
+        data->response = malloc((int)hm->message.len + 1);
+        strncpy(data->response, hm->message.ptr, (int)hm->message.len);
         c->is_closing = 1;       // Tell mongoose to close this connection
         data->done = true; // Tell event loop to stop
     } else if (ev == MG_EV_ERROR) {
@@ -54,10 +56,10 @@ static void default_request_callback(struct mg_connection *c, int ev,
     }
 }
 
-void request_get(const char *url) {
+char * request_get(const char *url) {
     fn_data_t fn_data = {.url = url, .done = false};
 
-    mg_log_set(MG_LL_DEBUG); // Set log level.
+    mg_log_set(MG_LL_NONE); // Set log level.
 
     struct mg_mgr mgr; // Event manager.
     mg_mgr_init(&mgr); // Initialise event manager.
@@ -69,4 +71,6 @@ void request_get(const char *url) {
         mg_mgr_poll(&mgr, 1000); // Wait for echo.
 
     mg_mgr_free(&mgr); // Deallocate resources.
+
+    return fn_data.response;
 }

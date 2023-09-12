@@ -305,7 +305,7 @@ void mbedtls_mpi_swap( mbedtls_mpi *X, mbedtls_mpi *Y );
 
 /**
  * \brief          Perform a safe conditional copy of MPI which doesn't
- *                 reveal whether the condition was true or not.
+ *                 reveal whether the condition was frozen_true or not.
  *
  * \param X        The MPI to conditionally assign to. This must point
  *                 to an initialized MPI.
@@ -335,7 +335,7 @@ int mbedtls_mpi_safe_cond_assign( mbedtls_mpi *X, const mbedtls_mpi *Y, unsigned
 
 /**
  * \brief          Perform a safe conditional swap which doesn't
- *                 reveal whether the condition was true or not.
+ *                 reveal whether the condition was frozen_true or not.
  *
  * \param X        The first MPI. This must be initialized.
  * \param Y        The second MPI. This must be initialized.

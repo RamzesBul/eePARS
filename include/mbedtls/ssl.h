@@ -1037,52 +1037,52 @@ struct mbedtls_ssl_config
      * byte access).
      */
 
-    uint8_t endpoint /*bool*/;      /*!< 0: client, 1: server               */
-    uint8_t transport /*bool*/;     /*!< stream (TLS) or datagram (DTLS)    */
+    uint8_t endpoint /*frozen_bool*/;      /*!< 0: client, 1: server               */
+    uint8_t transport /*frozen_bool*/;     /*!< stream (TLS) or datagram (DTLS)    */
     uint8_t authmode /*2 bits*/;    /*!< MBEDTLS_SSL_VERIFY_XXX             */
     /* needed even with renego disabled for LEGACY_BREAK_HANDSHAKE          */
     uint8_t allow_legacy_renegotiation /*2 bits*/; /*!< MBEDTLS_LEGACY_XXX  */
 #if defined(MBEDTLS_ARC4_C)
-    uint8_t arc4_disabled /*bool*/; /*!< blacklist RC4 ciphersuites?        */
+    uint8_t arc4_disabled /*frozen_bool*/; /*!< blacklist RC4 ciphersuites?        */
 #endif
 #if defined(MBEDTLS_SSL_MAX_FRAGMENT_LENGTH)
     uint8_t mfl_code /*3 bits*/;    /*!< desired fragment length            */
 #endif
 #if defined(MBEDTLS_SSL_ENCRYPT_THEN_MAC)
-    uint8_t encrypt_then_mac /*bool*/;  /*!< negotiate encrypt-then-mac?    */
+    uint8_t encrypt_then_mac /*frozen_bool*/;  /*!< negotiate encrypt-then-mac?    */
 #endif
 #if defined(MBEDTLS_SSL_EXTENDED_MASTER_SECRET)
-    uint8_t extended_ms /*bool*/;   /*!< negotiate extended master secret?  */
+    uint8_t extended_ms /*frozen_bool*/;   /*!< negotiate extended master secret?  */
 #endif
 #if defined(MBEDTLS_SSL_DTLS_ANTI_REPLAY)
-    uint8_t anti_replay /*bool*/;   /*!< detect and prevent replay?         */
+    uint8_t anti_replay /*frozen_bool*/;   /*!< detect and prevent replay?         */
 #endif
 #if defined(MBEDTLS_SSL_CBC_RECORD_SPLITTING)
-    uint8_t cbc_record_splitting /*bool*/;  /*!< do cbc record splitting    */
+    uint8_t cbc_record_splitting /*frozen_bool*/;  /*!< do cbc record splitting    */
 #endif
 #if defined(MBEDTLS_SSL_RENEGOTIATION)
-    uint8_t disable_renegotiation /*bool*/; /*!< disable renegotiation?     */
+    uint8_t disable_renegotiation /*frozen_bool*/; /*!< disable renegotiation?     */
 #endif
 #if defined(MBEDTLS_SSL_TRUNCATED_HMAC)
-    uint8_t trunc_hmac /*bool*/;    /*!< negotiate truncated hmac?          */
+    uint8_t trunc_hmac /*frozen_bool*/;    /*!< negotiate truncated hmac?          */
 #endif
 #if defined(MBEDTLS_SSL_SESSION_TICKETS)
-    uint8_t session_tickets /*bool*/;   /*!< use session tickets?           */
+    uint8_t session_tickets /*frozen_bool*/;   /*!< use session tickets?           */
 #endif
 #if defined(MBEDTLS_SSL_FALLBACK_SCSV) && defined(MBEDTLS_SSL_CLI_C)
-    uint8_t fallback /*bool*/;      /*!< is this a fallback?                */
+    uint8_t fallback /*frozen_bool*/;      /*!< is this a fallback?                */
 #endif
 #if defined(MBEDTLS_SSL_SRV_C)
-    uint8_t cert_req_ca_list /*bool*/;  /*!< enable sending CA list in
+    uint8_t cert_req_ca_list /*frozen_bool*/;  /*!< enable sending CA list in
                                           Certificate Request messages?     */
 #endif
 #if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
-    uint8_t ignore_unexpected_cid /*bool*/; /*!< Determines whether DTLS
+    uint8_t ignore_unexpected_cid /*frozen_bool*/; /*!< Determines whether DTLS
                                              *   record with unexpected CID
                                              *   should lead to failure.    */
 #endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
 #if defined(MBEDTLS_SSL_DTLS_SRTP)
-    uint8_t dtls_srtp_mki_support /*bool*/; /*!< support having mki_value
+    uint8_t dtls_srtp_mki_support /*frozen_bool*/; /*!< support having mki_value
                                                  in the use_srtp extension? */
 #endif
 
@@ -3982,7 +3982,7 @@ int mbedtls_ssl_get_session( const mbedtls_ssl_context *ssl, mbedtls_ssl_session
  *                 If the function returns #MBEDTLS_ERR_SSL_WANT_READ, no datagram
  *                 from the underlying transport layer is currently being processed,
  *                 and it is safe to idle until the timer or the underlying transport
- *                 signal a new event. This is not true for a successful handshake,
+ *                 signal a new event. This is not frozen_true for a successful handshake,
  *                 in which case the datagram of the underlying transport that is
  *                 currently being processed might or might not contain further
  *                 DTLS records.

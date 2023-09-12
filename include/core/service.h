@@ -1,3 +1,9 @@
+/**
+ * @file service.h
+ * @brief Services.
+ * @date 2023-09-09
+ */
+
 #ifndef EEPARS_SERVICE_H
 #define EEPARS_SERVICE_H
 
@@ -15,11 +21,11 @@ typedef struct {
 /**
  * @brief Register services.
  */
-p_services register_services(void);
+extern p_services register_services(void);
 
 /**
  * @brief Release services.
  */
-void release_services(p_services this);
+extern void release_services(p_services this);
 
 #endif //EEPARS_SERVICE_H
