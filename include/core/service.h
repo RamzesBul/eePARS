@@ -18,6 +18,8 @@ typedef struct {
     p_server server;
 } services_t, *p_services;
 
+extern p_services services;
+
 /**
  * @brief Register services.
  */

@@ -11,6 +11,7 @@
 #include <cesanta/mongoose.h>
 
 typedef struct {
+    const char *host;
     const char *cors_policy;
 } server_settings_t, *p_server_settings;
 
@@ -26,7 +27,7 @@ typedef struct {
 /**
  * @brief Register server.
  */
-extern p_server register_server(const char *uri, const char *settings);
+extern p_server register_server(const char *settings);
 
 /**
  * @brief Release server.

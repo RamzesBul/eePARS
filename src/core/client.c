@@ -1,20 +1,10 @@
 #include <core/client.h>
 
-p_client register_client(void) {
-    p_client this = malloc(sizeof(client_t));
-
-    return this;
-}
-
-void release_client(p_client this) {
-    free(this);
-}
-
 typedef struct {
     const char *url;
     bool done;
     char *response;
-} fn_data_t;
+} fn_data_t, *p_fn_data;
 
 /**
  * @brief Callback function for client.
@@ -24,9 +14,8 @@ typedef struct {
  * @param ev_data Event data @b (reserved).
  * @param fn_data Function data.
  */
-static void default_request_callback(struct mg_connection *c, int ev,
-                                     void *ev_data, void *fn_data) {
-    fn_data_t *data = (fn_data_t*) fn_data;
+static void default_request_callback(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
+    p_fn_data data = (p_fn_data) fn_data;
 
     if (ev == MG_EV_CONNECT) {
         // Connected to server. Extract host name from URL
@@ -34,7 +23,7 @@ static void default_request_callback(struct mg_connection *c, int ev,
 
         // If s_url is https://, tell client connection to use TLS
         if (mg_url_is_ssl(data->url)) {
-            struct mg_tls_opts opts = {.ca = "../credentials/_.vk.crt", .srvname = host};
+            struct mg_tls_opts opts = {.ca = "../data/_.vk.crt", .srvname = host};
             mg_tls_init(c, &opts);
         }
 
@@ -56,7 +45,7 @@ static void default_request_callback(struct mg_connection *c, int ev,
     }
 }
 
-char * request_get(const char *url) {
+char *request_get(const char *url) {
     fn_data_t fn_data = {.url = url, .done = false};
 
     mg_log_set(MG_LL_NONE); // Set log level.
@@ -64,11 +53,8 @@ char * request_get(const char *url) {
     struct mg_mgr mgr; // Event manager.
     mg_mgr_init(&mgr); // Initialise event manager.
 
-    struct mg_connection *c; // Client connection.
-    c = mg_http_connect(&mgr, url, default_request_callback,
-                        &fn_data); // Create client.
-    while (c && fn_data.done == false)
-        mg_mgr_poll(&mgr, 1000); // Wait for echo.
+    struct mg_connection *c = mg_http_connect(&mgr, url, default_request_callback, &fn_data); // Create client.
+    while (c && fn_data.done == false) mg_mgr_poll(&mgr, 1000); // Wait for echo.
 
     mg_mgr_free(&mgr); // Deallocate resources.
 

@@ -4,8 +4,8 @@ p_services register_services(void) {
     p_services this = malloc(sizeof(services_t));
 
     if (this) {
-        this->credentials = register_credentials("../credentials/credentials.json");
-        this->server = register_server(this->credentials->bff_uri, this->credentials->app_settigns);
+        this->credentials = register_credentials("../data/credentials.json");
+        this->server = register_server(this->credentials->app_settigns);
 
         return this;
     }

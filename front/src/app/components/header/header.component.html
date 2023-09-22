@@ -1,0 +1,20 @@
+<mat-toolbar [color]="headerOptions.color">
+  <button mat-icon-button [matMenuTriggerFor]="sideMenu" aria-label="icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+
+    <mat-menu #sideMenu="matMenu">
+      <button mat-menu-item>Insects</button>
+      <button mat-menu-item>Molluscs</button>
+      <button mat-menu-item>Crustaceans</button>
+      <button mat-menu-item>Corals</button>
+      <button mat-menu-item>Arachnids</button>
+      <button mat-menu-item>Velvet worms</button>
+      <button mat-menu-item>Horseshoe crabs</button>
+    </mat-menu>
+  </button>
+  <span>{{applcationInfo.NAME}}</span>
+  <span class="spacer"></span>
+  <button mat-icon-button aria-label="icon-button with home icon">
+    <mat-icon>home</mat-icon>
+  </button>
+</mat-toolbar>

@@ -1,3 +1,14 @@
-<div>
-  Name
-</div>
+<ng-container *ngIf="user | async as userData">
+  <mat-card class="user-info-card">
+    <mat-card-header>
+      <mat-card-title-group>
+        <mat-card-title>{{userData.name}}</mat-card-title>
+        <mat-card-subtitle>{{userData.role}}</mat-card-subtitle>
+        <img mat-card-sm-image [src]="userData.image"  alt="user_photo">
+      </mat-card-title-group>
+    </mat-card-header>
+    <mat-card-content>
+      {{userData.details}}
+    </mat-card-content>
+  </mat-card>
+</ng-container>

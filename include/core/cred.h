@@ -11,24 +11,21 @@
  * @brief Credentials.
  */
 typedef struct {
-    const char *json; // JSON credentials.
+    const char *json; // JSON data.
     int size; // JSON text length.
 
-    const char *auth_vk_api_uri; // Authorize VK API URI.
-    const char *bff_uri; // BFF host URI.
-    const char *frontend_uri; // Frontend host URI.
-
-    const char *vk_api_cert; // VK API certificate.
     const char *app_settigns; // Application settings path;
+    const char *auth_vk_api_uri; // Authorize VK API URI.
+    const char *vk_api_cert; // VK API certificate.
 } credentials_t, *p_credentials;
 
 /**
- * @brief Register credentials.
+ * @brief Register data.
  */
 extern p_credentials register_credentials(const char *filename);
 
 /**
- * @brief Release credentials.
+ * @brief Release data.
  */
 extern void release_credentials(p_credentials this);
 
