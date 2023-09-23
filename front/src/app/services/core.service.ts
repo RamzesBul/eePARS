@@ -4,15 +4,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CoreService {
-  public readonly APPLICATION_INFO = {
-    HOST: 'http://localhost:8080',
-    NAME: 'eePARS',
-    DEVS: 'E&E DH',
-    NAME_DETAILS: 'Processing and analysis of raw streams',
-    DEVS_DATAILS: 'Embedded & enterprise development hub',
+  public readonly ApplicationInfo: Record<string, unknown> = {
+    ServerUrl: 'http://localhost:8080',
+    CompanyInfo: {
+      Name: 'eePARS',
+      Devs: 'E&E DH',
+    },
   };
-
-
 
   constructor() { }
 }
