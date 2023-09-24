@@ -37,8 +37,10 @@ static void default_request_callback(struct mg_connection *c, int ev, void *ev_d
     } else if (ev == MG_EV_HTTP_MSG) {
         // Response is received. Print it
         struct mg_http_message *hm = (struct mg_http_message *)ev_data;
-        data->response = malloc((int)hm->message.len + 1);
-        strncpy(data->response, hm->message.ptr, (int)hm->message.len);
+        data->response = malloc((int)hm->body.len + 1);
+        strncpy(data->response, hm->body.ptr, (int)hm->body.len);
+        data->response[hm->body.len] = 0;
+
         c->is_closing = 1;       // Tell mongoose to close this connection
         data->done = true; // Tell event loop to stop
     } else if (ev == MG_EV_ERROR) {

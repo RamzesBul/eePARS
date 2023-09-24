@@ -2,8 +2,6 @@
 #include <core/client.h>
 #include <cesanta/frozen.h>
 
-#include <core/service.h>
-
 /**
  * @brief Launch server.
  *
@@ -74,20 +72,24 @@ static void server_event_handler(struct mg_connection *c, int ev, void *ev_data,
         char *response = NULL;
 
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
-        if (mg_http_match_uri(hm, "/api/main")) {
-            const char *user_name = "Толик Генадьевич";
-            const char *user_details = "Сын Генадия, родился в деревне Дубравка и был очень активным мальчиком. Любит прыгать, а еще очень озорной и добрый.";
-            const char *user_role = "Управляющий компанией ООО 'Черная пантера'";
-            const char *user_image = "https://sun9-42.userapi.com/impf/c624219/v624219645/3fcd5/8D5JfH90Y5s.jpg?size=960x714&quality=96&sign=21ad7aa0eb62d5951145d3bc01dab673&c_uniq_tag=HkCYOElxBAVA-0JToVlnlpUS_0X2T123C_8SkntBjHs&type=album";
+        if (mg_http_match_uri(hm, "/api/authorize")) {
+            char *access_token_start = strstr(hm->query.ptr, "access_token=");
+            char *access_token_end = strstr(hm->query.ptr, " HTTP");
+            int access_token_length = (int)((long long)access_token_end - (long long)access_token_start);
 
-            mg_http_reply(c, 200, server->server_settings->cors_policy,
-                          "{%m:\"%s\", %m:\"%s\", %m:\"%s\", %m:\"%s\"}\r\n",
-                          MG_ESC("name"), user_name,
-                          MG_ESC("role"), user_role,
-                          MG_ESC("details"), user_details,
-                          MG_ESC("image"), user_image);
-        } else if (mg_http_match_uri(hm, "/api/login")) {
-            response = request_get(services->credentials->auth_vk_api_uri);
+            if (!access_token_start || !access_token_end || !access_token_length) {
+                return;
+            }
+
+            char token[256];
+            strncpy(token, access_token_start, access_token_length);
+            token[access_token_length] = 0;
+
+            char request_buff[512];
+            sprintf(request_buff, "https://api.vk.com/method/account.getProfileInfo?%s&v=5.154", token);
+
+            response = request_get(request_buff);
+            mg_http_reply(c, 200, server->server_settings->cors_policy, "%s", response);
         } else {
             struct mg_http_serve_opts opts = {.root_dir = "."};
             mg_http_serve_dir(c, hm, &opts);
