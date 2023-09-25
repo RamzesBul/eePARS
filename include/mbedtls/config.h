@@ -3816,7 +3816,7 @@
  *              partially negates the benefits of enabling
  *              #MBEDTLS_CHECK_PARAMS in the first place, so is discouraged.
  *
- * \param cond  The expression that should evaluate to true, but doesn't.
+ * \param cond  The expression that should evaluate to frozen_true, but doesn't.
  */
 //#define MBEDTLS_PARAM_FAILED( cond )               assert( cond )
 

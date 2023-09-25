@@ -1,6 +1,17 @@
-build/*
-cmake-build-debug/*
-*.exe
-ignore/
+# Build
+build/
+cmake-build-debug/
+
+# IDE
 .idea/
 .vscode/
+front/.idea/
+front/.vscode/
+
+# Projects
+front/.angular/
+front/node_modules
+
+# Additional
+ignore/
+front/.gitignore

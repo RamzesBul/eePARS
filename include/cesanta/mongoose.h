@@ -440,7 +440,7 @@ typedef unsigned short uint16_t;
 typedef short int16_t;
 typedef unsigned int uint32_t;
 typedef int int32_t;
-typedef enum { false = 0, true = 1 } bool;
+typedef enum { frozen_false = 0, frozen_true = 1 } frozen_bool;
 #else
 #include <stdbool.h>
 #include <stdint.h>
@@ -1537,7 +1537,7 @@ size_t mg_mqtt_next_prop(struct mg_mqtt_message *, struct mg_mqtt_prop *,
 // Mongoose sends DNS queries that contain only one question:
 // either A (IPv4) or AAAA (IPv6) address lookup.
 // Therefore, we expect zero or one answer.
-// If `resolved` is true, then `addr` contains resolved IPv4 or IPV6 address.
+// If `resolved` is frozen_true, then `addr` contains resolved IPv4 or IPV6 address.
 struct mg_dns_message {
   uint16_t txnid;       // Transaction ID
   bool resolved;        // Resolve successful, addr is set
@@ -1631,10 +1631,10 @@ void mg_rpc_list(struct mg_rpc_req *r);
 struct mg_tcpip_if;  // MIP network interface
 
 struct mg_tcpip_driver {
-  bool (*init)(struct mg_tcpip_if *);                         // Init driver
+  frozen_bool (*init)(struct mg_tcpip_if *);                         // Init driver
   size_t (*tx)(const void *, size_t, struct mg_tcpip_if *);   // Transmit frame
   size_t (*rx)(void *buf, size_t len, struct mg_tcpip_if *);  // Receive frame
-  bool (*up)(struct mg_tcpip_if *);                           // Up/down status
+  frozen_bool (*up)(struct mg_tcpip_if *);                           // Up/down status
 };
 
 // Network interface
@@ -1642,10 +1642,10 @@ struct mg_tcpip_if {
   uint8_t mac[6];                  // MAC address. Must be set to a valid MAC
   uint32_t ip, mask, gw;           // IP address, mask, default gateway
   struct mg_str tx;                // Output (TX) buffer
-  bool enable_dhcp_client;         // Enable DCHP client
-  bool enable_dhcp_server;         // Enable DCHP server
-  bool enable_crc32_check;         // Do a CRC check on rx frames and strip it
-  bool enable_mac_check;           // Do a MAC check on rx frames
+  frozen_bool enable_dhcp_client;         // Enable DCHP client
+  frozen_bool enable_dhcp_server;         // Enable DCHP server
+  frozen_bool enable_crc32_check;         // Do a CRC check on rx frames and strip it
+  frozen_bool enable_mac_check;           // Do a MAC check on rx frames
   struct mg_tcpip_driver *driver;  // Low level driver
   void *driver_data;               // Driver-specific data
   struct mg_mgr *mgr;              // Mongoose event manager

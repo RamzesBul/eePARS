@@ -29,7 +29,7 @@
 #define MBEDTLS_CHECK_CONFIG_H
 
 /*
- * We assume CHAR_BIT is 8 in many places. In practice, this is true on our
+ * We assume CHAR_BIT is 8 in many places. In practice, this is frozen_true on our
  * target platforms, so not an issue, but let's just be extra sure.
  */
 #include <limits.h>

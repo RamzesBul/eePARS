@@ -1,7 +1,9 @@
 #include <core/service.h>
 
+p_services services;
+
 int main() {
-    p_services services = register_services(); // Register services.
+    services = register_services(); // Register services.
     release_services(services); // Release services.
     return 0;
 }
