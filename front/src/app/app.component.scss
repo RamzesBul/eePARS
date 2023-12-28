@@ -1,0 +1,12 @@
+.main-container {
+  width: 100vw;
+  height: 100vh;
+
+  &-navbar {
+    width: 240px;
+
+    &-button {
+      flex: 1;
+    }
+  }
+}
