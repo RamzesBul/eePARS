@@ -6,7 +6,6 @@ import { WelcomeComponent } from "./components/welcome/welcome.component";
 const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent },
   { path: 'authorization', component: AuthorizationComponent },
-  { path: '**', redirectTo: 'welcome' },
 ];
 
 @NgModule({

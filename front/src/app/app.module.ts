@@ -13,6 +13,7 @@ import {MatCardModule} from "@angular/material/card";
 import { AuthorizationComponent } from './components/authorization/authorization.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   declarations: [
@@ -20,18 +21,19 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     AuthorizationComponent,
     WelcomeComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatCardModule,
-    MatProgressSpinnerModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatSidenavModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

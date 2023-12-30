@@ -1,17 +1,15 @@
-# Build
-build/
-cmake-build-debug/
-
-# IDE
-.idea/
+# General
 .vscode/
-front/.idea/
-front/.vscode/
+ignore/
+build/
 
-# Projects
+# Server
+back/.vscode/
+back/data/
+back/build/
+
+# Front
+front/.vscode/
 front/.angular/
 front/node_modules
-
-# Additional
-ignore/
-front/.gitignore
+front/dist
