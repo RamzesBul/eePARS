@@ -24,4 +24,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/include
 target_link_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/lib" "${PROJECT_SOURCE_DIR}/lib/mbedtls")
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} ws2_32 "mbedtls" "mbedcrypto" "mbedx509")
+target_link_libraries(${PROJECT_NAME} "ws2_32" "mbedtls" "mbedcrypto" "mbedx509" "bcrypt")
