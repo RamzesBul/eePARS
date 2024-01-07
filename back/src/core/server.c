@@ -45,7 +45,7 @@ p_server register_server(const char *settings) {
 
 void release_server(p_server this) {
     if (this) {
-        pthread_join(this->server_thread, &(void *) {});
+        pthread_join(this->server_thread, &(void *) {0});
         mg_mgr_free(&this->mgr);
         if (this->server_settings->host) free(this->server_settings->host);
         if (this->server_settings->cors_policy) free(this->server_settings->cors_policy);
