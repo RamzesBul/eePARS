@@ -337,7 +337,7 @@ static int json_expect(struct frozen *f, const char *s, int len,
   return 0;
 }
 
-/* value = 'null' | 'frozen_true' | 'frozen_false' | number | string | array | object */
+/* value = 'null' | 'true' | 'false' | number | string | array | object */
 static int json_parse_value(struct frozen *f) {
   int ch = json_cur(f);
 
@@ -360,10 +360,10 @@ static int json_parse_value(struct frozen *f) {
       TRY(json_expect(f, "null", 4, JSON_TYPE_NULL));
       break;
     case 't':
-      TRY(json_expect(f, "frozen_true", 4, JSON_TYPE_TRUE));
+      TRY(json_expect(f, "true", 4, JSON_TYPE_TRUE));
       break;
     case 'f':
-      TRY(json_expect(f, "frozen_false", 5, JSON_TYPE_FALSE));
+      TRY(json_expect(f, "false", 5, JSON_TYPE_FALSE));
       break;
     case '-':
     case '0':
@@ -590,7 +590,7 @@ int json_vprintf(struct json_out *out, const char *fmt, va_list xap) {
         len += f(out, &ap);
       } else if (fmt[1] == 'B') {
         int val = va_arg(ap, int);
-        const char *str = val ? "frozen_true" : "frozen_false";
+        const char *str = val ? "true" : "false";
         len += out->printer(out, str, strlen(str));
       } else if (fmt[1] == 'H') {
 #if JSON_ENABLE_HEX
@@ -953,7 +953,7 @@ static void json_scanf_cb(void *callback_data, const char *name,
   switch (info->type) {
     case 'B':
       info->num_conversions++;
-      switch (sizeof(frozen_bool)) {
+      switch (sizeof(bool)) {
         case sizeof(char):
           *(char *) info->target = (token->type == JSON_TYPE_TRUE ? 1 : 0);
           break;

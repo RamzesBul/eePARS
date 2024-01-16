@@ -1,18 +1,30 @@
-<mat-drawer-container class="main-container">
-  <mat-drawer class="main-container-navbar" mode="side" opened>
-    <button mat-fab color="primary" class="main-container-navbar-button">
-      <mat-icon>person</mat-icon>
+<mat-toolbar class="toolbar" color="primary">
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>eePARS</span>
+  <span class="spacer"></span>
+  <button mat-icon-button>
+    <mat-icon>info</mat-icon>
+  </button>
+  <button mat-icon-button>
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-drawer-container class="container" autosize>
+  <mat-drawer #sidenav class="container-sidenav" mode="side">
+    <button mat-flat-button class="container-sidenav-element">
+      <mat-icon>person</mat-icon>Account
     </button>
-    <button class="main-container-navbar-button" mat-raised-button>
-      <mat-icon>waterfall</mat-icon>Statistic
+    <button mat-flat-button class="container-sidenav-element">
+      <mat-icon>trending_up</mat-icon>Statistic
     </button>
-    <button class="main-container-navbar-button" mat-raised-button>
-      <mat-icon>tune</mat-icon>Settings
-    </button>
-    <button class="main-container-navbar-button" mat-raised-button>
-      <mat-icon>terminal</mat-icon>VK API
+    <button mat-flat-button class="container-sidenav-element" (click)="openRepository()">
+      <mat-icon>code</mat-icon>GitHub
     </button>
   </mat-drawer>
-  <mat-drawer-content></mat-drawer-content>
+  <mat-drawer-content>
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
 </mat-drawer-container>
-<router-outlet></router-outlet>
