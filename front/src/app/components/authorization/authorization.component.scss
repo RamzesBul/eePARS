@@ -2,12 +2,16 @@
   flex: 1;
 }
 
-.loader-container {
-  height: 100vh;
-  width: 100vw;
+.flex-center {
+  height: 100%;
+  width: 100%;
 
   display: flex;
-
   justify-content: center;
   align-items: center;
+}
+
+.user-card {
+  height: 20%;
+  width: 50%;
 }

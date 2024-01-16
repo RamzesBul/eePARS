@@ -1,23 +1,25 @@
 <ng-container *ngIf="(userInfo$ | async)?.response as data; else loading">
-  <mat-card class="user-card">
-    <mat-card-header>
-      <mat-card-title-group>
-        <mat-card-title>
-          {{data.account_verification_profile.first_name}}
-          {{data.account_verification_profile.middle_name}}
-        </mat-card-title>
-        <mat-card-subtitle>{{data.screen_name}}</mat-card-subtitle>
-        <img mat-card-sm-image [src]="data.photo_200"  alt="user_photo">
-      </mat-card-title-group>
-    </mat-card-header>
-    <mat-card-content>
-      {{data.status}}
-    </mat-card-content>
-  </mat-card>
+  <div class="flex-center">
+    <mat-card class="user-card">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>
+            {{data.account_verification_profile.first_name}}
+            {{data.account_verification_profile.middle_name}}
+          </mat-card-title>
+          <mat-card-subtitle>{{data.screen_name}}</mat-card-subtitle>
+          <img mat-card-sm-image [src]="data.photo_200" alt="user_photo">
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content>
+        {{data.status}}
+      </mat-card-content>
+    </mat-card>
+  </div>
 </ng-container>
 
 <ng-template #loading>
-  <div class="loader-container">
+  <div class="flex-center">
     <mat-spinner></mat-spinner>
   </div>
 </ng-template>

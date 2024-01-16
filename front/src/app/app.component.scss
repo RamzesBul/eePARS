@@ -1,12 +1,17 @@
-.main-container {
-  width: 100vw;
-  height: 100vh;
-
-  &-navbar {
-    width: 240px;
-
-    &-button {
-      flex: 1;
+.toolbar {
+  height: 8vh;
+}
+.container {
+  height: 92vh;
+  &-sidenav {
+    width: 300px;
+    padding: 15px;
+    &-element {
+      width: 100%;
+      justify-content: start;
     }
   }
+}
+.spacer {
+  flex: 1 1 auto;
 }
