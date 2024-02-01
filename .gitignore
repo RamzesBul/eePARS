@@ -7,6 +7,9 @@ build/
 back/.vscode/
 back/data/
 back/build/
+back/lib/mbedtls/
+back/include/external_projects/mbedtls/
+back/include/external_projects/psa/
 
 # Front
 front/.vscode/
