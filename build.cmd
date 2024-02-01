@@ -22,7 +22,10 @@ if not exist "back\mbedtls\" (
     cd mbedtls\
     cmake -S . -B build\ -G "MinGW Makefiles"
     cmake --build build\ --target mbedtls --config Release
+    mkdir ..\lib\mbedtls\
     copy build\library\*.a ..\lib\mbedtls\
+    mkdir ..\%EXTERNAL_FOLDER%\mbedtls\
+    mkdir ..\%EXTERNAL_FOLDER%\psa\
     copy build\include\mbedtls\*.h ..\%EXTERNAL_FOLDER%\mbedtls\
     copy build\include\psa\*.h ..\%EXTERNAL_FOLDER%\psa\
 
