@@ -2,16 +2,18 @@
 
 #include <server/server.h>
 #include <client/client.h>
-#include <app/application.h>
 
+#include <container.h>
 
 /***********************************************************************************************
  * FUNCTIONS DEFINITIONS
  **********************************************************************************************/
 
-void welcome(struct mg_http_message *hm, p_server server) {
-    p_client client = get_app_client_instance();
-    char *response = client->configuration->vk_api_auth_uri;
+void welcome(struct mg_http_message *hm) {
+    p_server server = get_service_from_container(name_of(p_server));
+    p_client client = get_service_from_container(name_of(p_client));
+
+    char *response = client->configuration->vk_cfg->url;
 
     mg_http_reply(server->manager.conns, 200, server->configuration->cors_policy, "%s", response);
 }

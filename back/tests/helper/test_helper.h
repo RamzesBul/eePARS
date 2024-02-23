@@ -1,17 +1,16 @@
 #ifndef EEPARS_TEST_HELPER_H
 #define EEPARS_TEST_HELPER_H
 
-#include <app/application.h>
-#include <app/service.h>
-#include <core/configuration.h>
+#include <container.h>
 
+#include <app/application.h>
+#include <app/configuration.h>
 
 /**
  * @brief Testing environment.
  */
 typedef struct env_s {
     p_configuration cfg;
-    p_services services;
     p_application app;
 } env_t, *p_env;
 
@@ -21,27 +20,32 @@ typedef struct env_s {
  * @return Testing environment object.
  */
 p_env init_env() {
-    p_configuration configuration = init_configuration("../data/appsettings.json");
-    configuration->add_server_cfg(configuration);
-    configuration->add_client_cfg(configuration);
+    init_container();
 
-    p_services services = init_services();
-    services->add_configuration(services, configuration);
+    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_configuration), init_configuration, release_configuration, NULL);
+    p_configuration configuration = get_service_from_container(name_of(p_configuration));
+    configuration->open_cfg_file("../data/appsettings.json");
+    configuration->add_server_cfg();
+    configuration->add_client_cfg();
 
-    p_application application = init_application();
-    application->add_server(application, services);
-    application->add_client(application, services);
-    application->run(application);
-
-    p_env env = (p_env)malloc(sizeof(env_t));
-
-    env->cfg = configuration;
-    env->services = services;
-    env->app = application;
-
-    return env;
+    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_application), init_application, release_application, NULL);
+    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_server), init_server, release_server, configuration->server_configuration);
+    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_client), init_client, release_client, configuration->client_configuration);
+    p_application application = get_service_from_container(name_of(p_application));
+    application->add_server(configuration);
+    application->add_client(configuration);
+    
+    application->run();
 }
 
+/**
+ * @brief Release testing environment.
+ * 
+ * @param env Testing environment object.
+ */
+void release_env() {
+    release_container();
+}
 
 /**
  * @brief Compare strings.

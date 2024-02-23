@@ -3,9 +3,6 @@
 
 #include <cesanta/mongoose.h>
 
-#include <server/server.h>
-
-
 /*********************************************************************************************
  * FUNCTIONS DECLARATIONS
  ********************************************************************************************/
@@ -14,8 +11,7 @@
  * @brief Welcome controller.
  * 
  * @param hm HTTP message.
- * @param server Server object <p_server>.
  */
-extern void welcome(struct mg_http_message *hm, p_server server);
+extern void welcome(struct mg_http_message *hm);
 
 #endif // CONTROLLERS_WELCOME_H

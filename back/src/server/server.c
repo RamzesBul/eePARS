@@ -5,16 +5,18 @@
 #include <client/client.h>
 #include <cesanta/frozen.h>
 
-#include <core/configuration.h>
-#include <server/webapi/api.h>
+#include <app/configuration.h>
+#include <server/api.h>
 
+#include <container.h>
 
 /***********************************************************************************************
  * CONTROLLERS HEADERS
  **********************************************************************************************/
+
 #include <server/controllers/authorization.h>
 #include <server/controllers/welcome.h>
-
+#include <server/controllers/server_control.h>
 
 /***********************************************************************************************
  * STATIC FUNCTIONS DECLARATIONS
@@ -44,30 +46,27 @@ static void *server_thread_run(void *args);
  */
 static void server_event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data);
 
-
 /***********************************************************************************************
  * FUNCTIONS DEFINITIONS
  **********************************************************************************************/
 
 p_server init_server(p_server_configuration server_cfg) {
     p_server server = (p_server)malloc(sizeof(server_t));
-    if (!server)
-        return NULL;
+    if (!server) return NULL;
 
     server->configuration = server_cfg;
     server->run = run;
+    server->server_state = SERVER_STATE_STOPPED;
     
     return server;
 }
 
 void release_server(p_server server) {
     if (server) {
-        pthread_join(server->thread, &(void *) {0});        
         mg_mgr_free(&server->manager);
         free(server);        
     }
 }
-
 
 /***********************************************************************************************
  * STATIC FUNCTIONS DEFINITIONS
@@ -81,20 +80,22 @@ static void *server_thread_run(void *args) {
     p_server server = (p_server)args;
 
     mg_mgr_init(&server->manager);
-    mg_http_listen(&server->manager, server->configuration->host, server_event_handler, server);
+    mg_http_listen(&server->manager, server->configuration->host, server_event_handler, NULL);
     
-    for (;;) mg_mgr_poll(&server->manager, 1000);
+    server->server_state = SERVER_STATE_RUNNING;
+    while (server->server_state) mg_mgr_poll(&server->manager, 1000);
 
     pthread_exit(NULL);
 }
 
 static void server_event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
     if (ev == MG_EV_HTTP_MSG) {
-        p_server server = (p_server) fn_data;
+        p_server server = get_service_from_container(name_of(p_server));
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
 
-        if (invoke_controller("/authorization", hm, server, authorization) ||
-            invoke_controller("/welcome", hm, server, welcome));
+        if (invoke_controller("/authorization", hm, authorization) ||
+            invoke_controller("/welcome", hm, welcome) ||
+            invoke_controller("/server_control", hm, server_control));
         else {
             struct mg_http_serve_opts opts = {.root_dir = "."};
             mg_http_serve_dir(c, hm, &opts);

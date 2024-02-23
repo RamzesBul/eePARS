@@ -1,5 +1,5 @@
-#ifndef CONTROLLERS_AUTHORIZATION_H
-#define CONTROLLERS_AUTHORIZATION_H
+#ifndef CONTROLLERS_SERVER_CONTROL_H
+#define CONTROLLERS_SERVER_CONTROL_H
 
 #include <cesanta/mongoose.h>
 
@@ -8,10 +8,10 @@
  ********************************************************************************************/
 
 /**
- * @brief Authorization controller.
+ * @brief Server control controller.
  * 
  * @param hm HTTP message.
  */
-extern void authorization(struct mg_http_message *hm);
+extern void server_control(struct mg_http_message *hm);
 
-#endif // CONTROLLERS_AUTHORIZATION_H
+#endif // CONTROLLERS_SERVER_CONTROL_H
