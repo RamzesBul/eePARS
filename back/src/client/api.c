@@ -1,17 +1,24 @@
 #include <client/api.h>
 
+#include <client/client.h>
+#include <internal_projects/container.h>
 
 /*******************************************************************************
  * STRUCTS DECLARATION
  ******************************************************************************/
 
+/**
+ * @brief Function data.
+ * 
+ * @details
+ * This struct is used to get the response from the request.
+ */
 typedef struct fn_data_s {
     const char *url; // Target URL.
-    bool done;       // Response flag.
+    int done;       // Response flag.
     char *response;  // Response data.
     p_client client; // Client object.
 } fn_data_t, *p_fn_data;
-
 
 /*********************************************************************************************
  * STATIC FUNCTIONS DECLARATIONS
@@ -27,12 +34,13 @@ typedef struct fn_data_s {
  */
 static void request_callback(struct mg_connection *c, int ev, void *ev_data, void *fn_data);
 
-
 /*******************************************************************************
  * FUNCTIONS DEFINITIONS
  ******************************************************************************/
 
-char *request_get(p_client client, const char *url) {
+char *request_get(const char *url) {
+    p_client client = get_service_from_container(name_of(p_client));
+
     fn_data_t fn_data = {.url = url, .done = false, .response = NULL, .client = client};
 
     client->connection = mg_http_connect(&client->manager, url, request_callback, &fn_data);
@@ -41,7 +49,6 @@ char *request_get(p_client client, const char *url) {
 
     return fn_data.response;
 }
-
 
 /*********************************************************************************************
  * STATIC FUNCTIONS DEFINITIONS
@@ -53,7 +60,7 @@ static void request_callback(struct mg_connection *connection, int ev, void *ev_
     if (ev == MG_EV_CONNECT) {
         struct mg_str host = mg_url_host(data->url);
         if (mg_url_is_ssl(data->url)) {
-            struct mg_tls_opts opts = {.ca = data->client->configuration->vk_api_cert, .srvname = host};
+            struct mg_tls_opts opts = {.ca = data->client->configuration->vk_cfg->cert, .srvname = host};
             mg_tls_init(connection, &opts);
         }
         mg_printf(connection,

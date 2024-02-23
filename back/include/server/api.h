@@ -3,9 +3,6 @@
 
 #include <cesanta/mongoose.h>
 
-#include <server/server.h>
-
-
 /*********************************************************************************************
  * FUNCTIONS DECLARATIONS
  ********************************************************************************************/
@@ -15,12 +12,10 @@
  *
  * @param url URL.
  * @param hm HTTP message.
- * @param server Server.
  * @param controller Controller.
  */
 extern int invoke_controller(const char *url,
                       struct mg_http_message *hm,
-                      p_server server,
-                      void (*controller)(struct mg_http_message *hm, p_server server));
+                      void (*controller)(struct mg_http_message *hm));
 
 #endif // EEPARS_SERVER_API_H

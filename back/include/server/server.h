@@ -5,12 +5,19 @@
 
 #include <cesanta/mongoose.h>
 
-#include <core/configuration.h>
-
+#include <app/configuration.h>
 
 /*********************************************************************************************
  * STRUCTS DECLARATIONS
  ********************************************************************************************/
+
+/**
+ * @brief Server state configuration.
+ */
+typedef enum server_state_s {
+    SERVER_STATE_STOPPED = 0, // Server stopped.
+    SERVER_STATE_RUNNING = 1  // Server running.
+} server_state_t, *p_server_state;
 
 /**
  * @brief Server.
@@ -19,9 +26,9 @@ typedef struct server_s {
     p_server_configuration configuration; // Server configuration.
     struct mg_mgr manager;                // Mongoose manager.
     pthread_t thread;                     // Server thread.
+    server_state_t server_state;          // Server state.
     void (*run)(struct server_s *server); // Run server.
 } server_t, *p_server;
-
 
 /*********************************************************************************************
  * FUNCTIONS DECLARATIONS

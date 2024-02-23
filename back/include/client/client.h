@@ -3,8 +3,7 @@
 
 #include <cesanta/mongoose.h>
 
-#include <core/configuration.h>
-
+#include <app/configuration.h>
 
 /*********************************************************************************************
  * STRUCTS DECLARATIONS
@@ -19,7 +18,6 @@ typedef struct client_s {
     struct mg_connection *connection;     // Mongoose connection.
     void (*run)(struct client_s *client); // Run client.
 } client_t, *p_client;
-
 
 /*********************************************************************************************
  * FUNCTIONS DECLARATIONS
