@@ -37,10 +37,9 @@ typedef struct server_s {
 /**
  * @brief Initialize server.
  * 
- * @param server_cfg Server configutation.
  * @return Server object.
  */
-extern p_server init_server(p_server_configuration server_cfg);
+extern p_server init_server();
 
 /**
  * @brief Release server.

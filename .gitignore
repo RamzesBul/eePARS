@@ -5,7 +5,6 @@ build/
 
 # Server
 back/.vscode/
-back/data/
 back/build/
 back/lib/mbedtls/
 back/include/external_projects/mbedtls/
