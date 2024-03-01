@@ -14,8 +14,8 @@
  * @brief Application.
  */
 typedef struct application_s {
-    struct application_s *(*add_server)(p_configuration cfg); // Add server.
-    struct application_s *(*add_client)(p_configuration cfg); // Add client.
+    struct application_s *(*add_server)(); // Add server.
+    struct application_s *(*add_client)(); // Add client.
     void (*run)(); // Run application.
 
     p_configuration cfg; // Configuration.

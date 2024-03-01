@@ -3,6 +3,9 @@
 
 /**
  * @brief Stringify parameter.
+ * 
+ * @details
+ * Converts parameter to string.
  */
 #define name_of(param) #param
 

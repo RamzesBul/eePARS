@@ -1,5 +1,7 @@
 #include <client/client.h>
 
+#include <container.h>
+
 /*********************************************************************************************
  * STATIC FUNCTIONS DECLARATIONS
  ********************************************************************************************/
@@ -15,8 +17,12 @@ static void run(p_client client);
  * FUNCTIONS DEFINITIONS
  ********************************************************************************************/
 
-p_client init_client(p_client_configuration client_cfg) {
+p_client init_client() {
     p_client client = malloc(sizeof(client_t));
+    if (!client) return NULL;
+
+    p_configuration configuration = get_service_from_container(name_of(p_configuration));
+    p_client_configuration client_cfg = configuration->client_configuration;
 
     client->configuration = client_cfg;
     client->run = run;
@@ -25,10 +31,12 @@ p_client init_client(p_client_configuration client_cfg) {
 }
 
 void release_client(p_client client) {
-    if (client) {
-        mg_mgr_free(&client->manager);
-        free(client);
-    }
+    if (!client) return;
+        
+    mg_mgr_free(&client->manager);
+    free(client);
+    
+    client = NULL;
 }
 
 /*********************************************************************************************

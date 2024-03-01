@@ -55,30 +55,28 @@ void release_application(p_application app) {
     if (!app) return;
 
     free(app);
+
+    app = NULL;
 }
 
 /*********************************************************************************************
  * STATIC FUNCTIONS DEFINITIONS
  ********************************************************************************************/
 
-static p_application add_server(p_configuration cfg) {
+static p_application add_server() {
     p_application app = get_service_from_container(name_of(p_application));
-    if (cfg && app) {
-        if (!app->cfg) app->cfg = cfg;
+    if (!app) return NULL;
 
-        p_server_configuration server_cfg = app->cfg->server_configuration;
-        app->server = get_service_from_container(name_of(p_server));
-    }
+    app->server = get_service_from_container(name_of(p_server));
+    return app;
 }
 
-static p_application add_client(p_configuration cfg) {
+static p_application add_client() {
     p_application app = get_service_from_container(name_of(p_application));
-    if (cfg && app) {
-        if (!app->cfg) app->cfg = cfg;
-
-        p_client_configuration client_cfg = app->cfg->client_configuration;
-        app->client = get_service_from_container(name_of(p_client));
-    }
+    if (!app) return NULL;
+    
+    app->client = get_service_from_container(name_of(p_client));
+    return app;
 }
 
 static void run() {
