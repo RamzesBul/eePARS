@@ -15,6 +15,8 @@ p_dictionary create_dictionary() {
 }
 
 void delete_dictionary(p_dictionary dict) {
+    if (!dict) return;
+
     p_record record = dict->head;
     while (record) {
         p_record next = record->next;
@@ -22,6 +24,7 @@ void delete_dictionary(p_dictionary dict) {
         record = next;
     }
     free(dict);
+    dict = NULL;
 }
 
 void add_record_to_dictionary(const p_dictionary dict, char *key, void *value) {
@@ -39,6 +42,8 @@ void add_record_to_dictionary(const p_dictionary dict, char *key, void *value) {
 }
 
 void remove_record_from_dictionary(const p_dictionary dict, char *key) {
+    if (!dict->size) return;
+
     p_record record = dict->head;
     p_record prev = NULL;
     while (record) {
@@ -48,12 +53,39 @@ void remove_record_from_dictionary(const p_dictionary dict, char *key) {
             else
                 dict->head = record->next;
             free(record);
+            record = NULL;
             dict->size--;
             return;
         }
         prev = record;
         record = record->next;
     }
+}
+
+void remove_record_from_dictionary_by_index(const p_dictionary dict, int index) {
+    if (!dict->size) return;
+
+    p_record record = dict->head;
+    p_record prev = NULL;
+    for (int i = 0; i < index; i++) {
+        if (!record)
+            return;
+        prev = record;
+        record = record->next;
+    }
+    if (prev)
+        prev->next = record->next;
+    else
+        dict->head = record->next;
+    free(record);
+    record = NULL;
+    dict->size--;
+}
+
+void update_record_in_dictionary(const p_dictionary dict, char *key, void *value) {
+    p_record record = get_record_from_dictionary(dict, key);
+    if (record)
+        record->value = value;
 }
 
 void *get_value_from_dictionary(const p_dictionary dict, char *key) {
@@ -105,6 +137,17 @@ p_record get_record_from_dictionary(const p_dictionary dict, char *key) {
         record = record->next;
     }
     return NULL;
+}
+
+p_dictionary get_records_from_dictionary(const p_dictionary dict, char *key) {
+    p_dictionary records_dict = create_dictionary();
+    p_record record = dict->head;
+    while (record) {
+        if (strcmp(record->key, key) == 0)
+            add_record_to_dictionary(records_dict, record->key, record->value);
+        record = record->next;
+    }
+    return records_dict;
 }
 
 p_record get_head_record_from_dictionary(const p_dictionary dict) {

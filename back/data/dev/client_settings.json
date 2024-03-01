@@ -1,0 +1,6 @@
+{
+	"VK_API": {
+		"AUTHORIZE_URI": "https://oauth.vk.com/authorize?client_id=51737169&display=page&redirect_uri=http://0.0.0.0:4200/authorization&scope=friends&response_type=token&v=5.131&state=123456",
+		"ACCESS_CERTIFICATE": "../data/_.vk.crt"
+	}
+}

@@ -50,9 +50,12 @@ static void server_event_handler(struct mg_connection *c, int ev, void *ev_data,
  * FUNCTIONS DEFINITIONS
  **********************************************************************************************/
 
-p_server init_server(p_server_configuration server_cfg) {
+p_server init_server() {
     p_server server = (p_server)malloc(sizeof(server_t));
     if (!server) return NULL;
+
+    p_configuration configuration = get_service_from_container(name_of(p_configuration));
+    p_server_configuration server_cfg = configuration->server_configuration;
 
     server->configuration = server_cfg;
     server->run = run;
@@ -62,10 +65,12 @@ p_server init_server(p_server_configuration server_cfg) {
 }
 
 void release_server(p_server server) {
-    if (server) {
-        mg_mgr_free(&server->manager);
-        free(server);        
-    }
+    if (!server) return;
+    
+    mg_mgr_free(&server->manager);
+    free(server);        
+    
+    server = NULL;
 }
 
 /***********************************************************************************************

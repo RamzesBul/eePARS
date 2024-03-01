@@ -112,6 +112,8 @@ p_configuration init_configuration(void) {
     wrapped_cfg->open_cfg_file = open_cfg_file;
     wrapped_cfg->add_client_cfg = add_client_cfg;
     wrapped_cfg->add_server_cfg = add_server_cfg;
+    wrapped_cfg->raw_json_data = NULL;
+    wrapped_cfg->raw_json_data_size = 0;
 
     return (p_configuration)wrapped_cfg;
 }
@@ -132,6 +134,8 @@ void release_configuration(p_configuration cfg) {
     if (wrapped_cfg->server_configuration) release_server_cfg(wrapped_cfg);
     if (wrapped_cfg->raw_json_data) free(wrapped_cfg->raw_json_data);
     free(wrapped_cfg);
+    
+    wrapped_cfg = NULL;
 }
 
 /***********************************************************************************************
@@ -160,6 +164,7 @@ static p_configuration add_server_cfg() {
 static p_client_configuration read_client_cfg(p_wrap_configuration wrapped_cfg) {
     p_client_configuration client_cfg = (p_client_configuration)malloc(sizeof(client_configuration_t));
     if (!client_cfg) return NULL;
+    client_cfg->vk_cfg = NULL;
 
     const char *path;
     json_scanf(wrapped_cfg->raw_json_data, wrapped_cfg->raw_json_data_size, "{CLIENT_SETTINGS:%Q}", &path);
@@ -168,6 +173,9 @@ static p_client_configuration read_client_cfg(p_wrap_configuration wrapped_cfg) 
 
     client_cfg->vk_cfg = (p_vk_client_configuration)malloc(sizeof(vk_client_configuration_t));
     if (client_cfg->vk_cfg) {
+        client_cfg->vk_cfg->url = NULL;
+        client_cfg->vk_cfg->cert = NULL;
+
         json_scanf(json_client_data, json_client_data_size, "{VK_API:{AUTHORIZE_URI:%Q}}", &client_cfg->vk_cfg->url);
         json_scanf(json_client_data, json_client_data_size, "{VK_API:{ACCESS_CERTIFICATE:%Q}}", &client_cfg->vk_cfg->cert);
     }
@@ -178,6 +186,8 @@ static p_client_configuration read_client_cfg(p_wrap_configuration wrapped_cfg) 
 static p_server_configuration read_server_cfg(p_wrap_configuration wrapped_cfg) {
     p_server_configuration server_cfg = (p_server_configuration)malloc(sizeof(server_configuration_t));
     if (!server_cfg) return NULL;
+    server_cfg->host = NULL;
+    server_cfg->cors_policy = NULL;
 
     const char *path;
     json_scanf(wrapped_cfg->raw_json_data, wrapped_cfg->raw_json_data_size, "{SERVER_SETTINGS:%Q}", &path);
@@ -199,8 +209,12 @@ static void release_client_cfg(p_wrap_configuration wrapped_cfg) {
             if (client_cfg->vk_cfg->url) free(client_cfg->vk_cfg->url);
             if (client_cfg->vk_cfg->cert) free(client_cfg->vk_cfg->cert);
             free(client_cfg->vk_cfg);
+
+            client_cfg->vk_cfg = NULL;
         }
         free(client_cfg);
+
+        client_cfg = NULL;
     }
 }
 
@@ -212,5 +226,7 @@ static void release_server_cfg(p_wrap_configuration wrapped_cfg) {
         if (server_cfg->host) free(server_cfg->host);
         if (server_cfg->cors_policy) free(server_cfg->cors_policy);
         free(server_cfg);
+
+        server_cfg = NULL;
     }
 }

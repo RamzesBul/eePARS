@@ -2,7 +2,7 @@
  * @file dictionary.h
  * @author chcp (cmewhou@yandex.ru)
  * @brief Common implementation of an <key:value> pair collection based on a linked list.
- * @version 1.0
+ * @version 1.1
  * @date 2024-02-22
  * 
  * @copyright Copyright (c) 2024
@@ -123,6 +123,20 @@ extern void delete_dictionary(p_dictionary dict);
 extern void add_record_to_dictionary(const p_dictionary dict, char *key, void *value);
 
 /**
+ * @brief Add record to dictionary by index.
+ * 
+ * @details
+ * Add a new record to specified dictionary by index.
+ * The record is identified by string key and contains value of any type.
+ *
+ * @param dict Dictionary object.
+ * @param index Record index.
+ * @param key Record key.
+ * @param value Record value.
+ */
+extern void add_record_to_dictionary_by_index(const p_dictionary dict, int index, char *key, void *value);
+
+/**
  * @brief Remove record from dictionary.
  * 
  * @details
@@ -132,6 +146,29 @@ extern void add_record_to_dictionary(const p_dictionary dict, char *key, void *v
  * @param key Record key.
  */
 extern void remove_record_from_dictionary(const p_dictionary dict, char *key);
+
+/**
+ * @brief Remove record from dictionary by index.
+ * 
+ * @details
+ * Remove a record from the specified dictionary by index.
+ *
+ * @param dict Dictionary object.
+ * @param index Record index.
+ */
+extern void remove_record_from_dictionary_by_index(const p_dictionary dict, int index);
+
+/**
+ * @brief Update record in dictionary.
+ * 
+ * @details
+ * Update a record in the specified dictionary.
+ * 
+ * @param dict Dictionary object.
+ * @param key Record key.
+ * @param value Record value.
+ */
+extern void update_record_in_dictionary(const p_dictionary dict, char *key, void *value);
 
 /**
  * @brief Get value from dictionary by key.
@@ -232,6 +269,19 @@ extern void *get_next_key_from_dictionary(const p_dictionary dict, char *key);
  * @return Record.
  */
 extern p_record get_record_from_dictionary(const p_dictionary dict, char *key);
+
+/**
+ * @brief Get records from dictionary by key.
+ * 
+ * @details
+ * Get all matching records from specified dictionary by key.
+ * Return the dictionary of records, if it exists else NULL.
+ * 
+ * @param dict Dictionary.
+ * @param key Record key.
+ * @return Dictionary of records.
+ */
+extern p_dictionary get_records_from_dictionary(const p_dictionary dict, char *key);
 
 /**
  * @brief Get head record from dictionary.

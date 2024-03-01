@@ -26,10 +26,9 @@ typedef struct client_s {
 /**
  * @brief Initialize client.
  * 
- * @param client_cfg Configuration.
  * @return Client object.
  */
-extern p_client init_client(p_client_configuration client_cfg);
+extern p_client init_client();
 
 /**
  * @brief Release client.
