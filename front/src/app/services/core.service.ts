@@ -42,7 +42,8 @@ export interface IUserProfile {
 })
 export class CoreService {
   public readonly applicationInfo: Record<string, string> = {
-    serverUrl: 'http://localhost:8080',
+    stand: window.location.hostname === 'localhost' ? 'local' : 'dev',
+    serverUrl: window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'http://eepars.ru/api',
   };
 
   constructor() { }
