@@ -1,4 +1,4 @@
 {
-	"HOST_URI": "http://0.0.0.0:8080",
+	"HOST_URI": "http://213.171.12.49:8080",
 	"CORS_POLICY": "Access-Control-Allow-Origin: *\r\n"
 }
