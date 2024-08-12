@@ -39,7 +39,7 @@ typedef struct server_s {
  * 
  * @return Server object.
  */
-extern p_server init_server();
+extern p_server init_server(void);
 
 /**
  * @brief Release server.

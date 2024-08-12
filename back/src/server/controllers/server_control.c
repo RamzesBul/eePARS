@@ -4,6 +4,7 @@
 #include <client/client.h>
 
 #include <container.h>
+#include <macro.h>
 
 /***********************************************************************************************
  * STATIC FUNCTIONS DECLARATIONS
@@ -16,7 +17,7 @@ int recieve_signal(struct mg_http_message *hm, const char *signal);
  **********************************************************************************************/
 
 void server_control(struct mg_http_message *hm) {
-    p_server server = get_service_from_container(name_of(p_server));
+    p_server server = get_service_from_global_container(name_of(p_server));
 
     if (!hm->query.len)
         mg_http_reply(server->manager.conns, 400, server->configuration->cors_policy, "%s", "No control message.");

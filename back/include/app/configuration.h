@@ -50,8 +50,8 @@ typedef struct configuration_s {
     p_server_configuration server_configuration;                // Server configuration.
 
     struct configuration_s *(*open_cfg_file)(const char *path); // Open configuration file.
-    struct configuration_s *(*add_client_cfg)();                // Add VK API configuration.
-    struct configuration_s *(*add_server_cfg)();                // Add server configuration.
+    struct configuration_s *(*add_client_cfg)(void);                // Add VK API configuration.
+    struct configuration_s *(*add_server_cfg)(void);                // Add server configuration.
 } configuration_t, *p_configuration;
 
 /*********************************************************************************************

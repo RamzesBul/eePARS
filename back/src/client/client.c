@@ -1,6 +1,7 @@
 #include <client/client.h>
 
 #include <container.h>
+#include <macro.h>
 
 /*********************************************************************************************
  * STATIC FUNCTIONS DECLARATIONS
@@ -17,11 +18,11 @@ static void run(p_client client);
  * FUNCTIONS DEFINITIONS
  ********************************************************************************************/
 
-p_client init_client() {
+p_client init_client(void) {
     p_client client = malloc(sizeof(client_t));
     if (!client) return NULL;
 
-    p_configuration configuration = get_service_from_container(name_of(p_configuration));
+    p_configuration configuration = get_service_from_global_container(name_of(p_configuration));
     p_client_configuration client_cfg = configuration->client_configuration;
 
     client->configuration = client_cfg;

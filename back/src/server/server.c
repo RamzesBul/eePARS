@@ -9,6 +9,7 @@
 #include <server/api.h>
 
 #include <container.h>
+#include <macro.h>
 
 /***********************************************************************************************
  * CONTROLLERS HEADERS
@@ -50,11 +51,11 @@ static void server_event_handler(struct mg_connection *c, int ev, void *ev_data,
  * FUNCTIONS DEFINITIONS
  **********************************************************************************************/
 
-p_server init_server() {
+p_server init_server(void) {
     p_server server = (p_server)malloc(sizeof(server_t));
     if (!server) return NULL;
 
-    p_configuration configuration = get_service_from_container(name_of(p_configuration));
+    p_configuration configuration = get_service_from_global_container(name_of(p_configuration));
     p_server_configuration server_cfg = configuration->server_configuration;
 
     server->configuration = server_cfg;
@@ -95,7 +96,7 @@ static void *server_thread_run(void *args) {
 
 static void server_event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
     if (ev == MG_EV_HTTP_MSG) {
-        p_server server = get_service_from_container(name_of(p_server));
+        p_server server = get_service_from_global_container(name_of(p_server));
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
 
         if (invoke_controller("/authorization", hm, authorization) ||

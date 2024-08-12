@@ -1,10 +1,13 @@
 #ifndef EEPARS_TEST_HELPER_H
 #define EEPARS_TEST_HELPER_H
 
-#include <container.h>
-
 #include <app/application.h>
 #include <app/configuration.h>
+
+#include <container.h>
+#include <macro.h>
+
+#define CFG_FILE "../data/appsettings.json"
 
 /**
  * @brief Testing environment.
@@ -19,21 +22,20 @@ typedef struct env_s {
  * 
  * @return Testing environment object.
  */
-p_env init_env() {
-    init_container();
+p_env init_env(void) {
+    add_singletone_to_global_container(SERVICE_TYPE_SINGLETON, name_of(p_configuration), init_configuration, release_configuration);
+    add_singletone_to_global_container(SERVICE_TYPE_SINGLETON, name_of(p_application), init_application, release_application);
+    add_singletone_to_global_container(SERVICE_TYPE_SINGLETON, name_of(p_server), init_server, release_server);
+    add_singletone_to_global_container(SERVICE_TYPE_SINGLETON, name_of(p_client), init_client, release_client);
 
-    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_configuration), init_configuration, release_configuration, NULL);
-    p_configuration configuration = get_service_from_container(name_of(p_configuration));
-    configuration->open_cfg_file("../data/appsettings.json");
+    p_configuration configuration = get_service_from_global_container(name_of(p_configuration));
+    configuration->open_cfg_file(CFG_FILE);
     configuration->add_server_cfg();
     configuration->add_client_cfg();
-
-    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_application), init_application, release_application, NULL);
-    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_server), init_server, release_server, configuration->server_configuration);
-    add_service_to_container(SERVICE_TYPE_SINGLETON, name_of(p_client), init_client, release_client, configuration->client_configuration);
-    p_application application = get_service_from_container(name_of(p_application));
-    application->add_server(configuration);
-    application->add_client(configuration);
+    
+    p_application application = get_service_from_global_container(name_of(p_application));
+    application->add_server();
+    application->add_client();
     
     application->run();
 }
@@ -43,8 +45,8 @@ p_env init_env() {
  * 
  * @param env Testing environment object.
  */
-void release_env() {
-    release_container();
+void release_env(void) {
+    release_all_containers();
 }
 
 /**

@@ -13,16 +13,16 @@
  *
  * @return Test result.
  */
-int test_Welcome_OK();
+int test_Welcome_OK(void);
 
 /**
  * @brief Test for AuthorizationController.
  *
  * @return Test result.
  */
-int test_Authorize_OK();
+int test_Authorize_OK(void);
 
-int main() {
+int main(void) {
     init_env();
     int exit_result = 0;
 
@@ -32,7 +32,7 @@ int main() {
     return exit_result;
 }
 
-int test_Welcome_OK() {
+int test_Welcome_OK(void) {
     char *expected =
         "https://oauth.vk.com/"
         "authorize?client_id=51737169&display=page&redirect_uri=http://"

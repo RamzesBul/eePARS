@@ -6,6 +6,7 @@
 #include <cesanta/frozen.h>
 
 #include <container.h>
+#include <macro.h>
 
 /***********************************************************************************************
  * SCOPED STRUCTS DECLARATIONS
@@ -23,8 +24,8 @@ typedef struct wrap_configuration_s {
     p_server_configuration server_configuration;                // Server configuration.
 
     struct configuration_s *(*open_cfg_file)(const char *path); // Open configuration file.
-    struct configuration_s *(*add_client_cfg)();                // Add VK API configuration.
-    struct configuration_s *(*add_server_cfg)();                // Add server configuration.
+    struct configuration_s *(*add_client_cfg)(void);                // Add VK API configuration.
+    struct configuration_s *(*add_server_cfg)(void);                // Add server configuration.
 
     char *raw_json_data;                                        // Raw data from configuration file.
     int raw_json_data_size;                                     // Raw data size.
@@ -54,14 +55,14 @@ static void read_raw_json_data(p_wrap_configuration wrapped_cfg, const char *pat
  *
  * @return Configuration object.
  */
-static p_configuration add_client_cfg();
+static p_configuration add_client_cfg(void);
 
 /**
  * @brief Add server configuration.
  *
  * @return Configuration object.
  */
-static p_configuration add_server_cfg();
+static p_configuration add_server_cfg(void);
 
 /**
  * @brief Read client configuration.
@@ -119,7 +120,7 @@ p_configuration init_configuration(void) {
 }
 
 p_configuration open_cfg_file(const char *path) {
-    p_wrap_configuration wrapped_cfg = get_service_from_container(name_of(p_configuration));
+    p_wrap_configuration wrapped_cfg = get_service_from_global_container(name_of(p_configuration));
 
     read_raw_json_data(wrapped_cfg, path);
 
@@ -147,15 +148,15 @@ static void read_raw_json_data(p_wrap_configuration wrapped_cfg, const char *pat
     wrapped_cfg->raw_json_data_size = strlen(wrapped_cfg->raw_json_data);
 }
 
-static p_configuration add_client_cfg() {
-    p_wrap_configuration wrapped_cfg = get_service_from_container(name_of(p_configuration));
+static p_configuration add_client_cfg(void) {
+    p_wrap_configuration wrapped_cfg = get_service_from_global_container(name_of(p_configuration));
 
     wrapped_cfg->client_configuration = read_client_cfg(wrapped_cfg);
     return (p_configuration)wrapped_cfg;
 }
 
-static p_configuration add_server_cfg() {
-    p_wrap_configuration wrapped_cfg = get_service_from_container(name_of(p_configuration));
+static p_configuration add_server_cfg(void) {
+    p_wrap_configuration wrapped_cfg = get_service_from_global_container(name_of(p_configuration));
 
     wrapped_cfg->server_configuration = read_server_cfg(wrapped_cfg);
     return (p_configuration)wrapped_cfg;

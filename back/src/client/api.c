@@ -1,7 +1,9 @@
 #include <client/api.h>
 
 #include <client/client.h>
-#include <internal_projects/container.h>
+
+#include <container.h>
+#include <macro.h>
 
 /*******************************************************************************
  * STRUCTS DECLARATION
@@ -39,7 +41,7 @@ static void request_callback(struct mg_connection *c, int ev, void *ev_data, voi
  ******************************************************************************/
 
 char *request_get(const char *url) {
-    p_client client = get_service_from_container(name_of(p_client));
+    p_client client = get_service_from_global_container(name_of(p_client));
 
     fn_data_t fn_data = {.url = url, .done = false, .response = NULL, .client = client};
 
