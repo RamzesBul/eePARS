@@ -18,7 +18,7 @@ echo The files don't exist, I start cloning Mbed TLS and build it up.
 
 if not exist "back\mbedtls\" (
     cd back\
-    git clone -b v2.28.6 https://github.com/Mbed-TLS/mbedtls.git
+    git clone -b v2.28.8 https://github.com/Mbed-TLS/mbedtls.git --recurse-submodules
     cd mbedtls\
     cmake -S . -B build\ -G "MinGW Makefiles"
     cmake --build build\ --target mbedtls --config Release
@@ -39,4 +39,4 @@ if not exist "back\mbedtls\" (
 :begin
 
 :: Build docker image
-docker image build . -t eepars
+@REM docker image build . -t eepars
