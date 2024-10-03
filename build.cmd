@@ -63,8 +63,8 @@ if exist "lib\IPee\libIpEe.a" (
     goto build
 )
 for %%f in (
-    "libEpEeDictionary.a"
-    "libEpEeContainer.a"
+    "libIpEeDictionary.a"
+    "libIpEeContainer.a"
 ) do (
     if not exist "lib\IPee\%%~f" (
         echo File "lib\IPee\%%~f" does not exist.
@@ -78,7 +78,7 @@ goto build
 
 :clone_ipee
 
-:: Create the folder for the EPEE library.
+:: Create the folder for the IPEE library.
 set IPEE_LIB_FOLDER=.\back\ipee
 if not exist "%IPEE_LIB_FOLDER%" (
     mkdir "%IPEE_LIB_FOLDER%"

@@ -7,7 +7,7 @@ MBEDTLS_LIB_FOLDER=./back/mbedtls
 EXTERNAL_FOLDER=./include/external_projects
 
 # Function to clone MbedTLS if required files are missing.
-function clone_mbedtls {
+clone_mbedtls() {
     # Create the folder for the Mbed TLS library if it doesn't exist.
     if [ ! -d "$MBEDTLS_LIB_FOLDER" ]; then
         mkdir "$MBEDTLS_LIB_FOLDER"
@@ -61,7 +61,7 @@ IPEE_LIB_FOLDER=./back/ipee
 INTERNAL_FOLDER=./include/internal_projects
 
 # Function to clone IPEE if required files are missing.
-function clone_ipee {
+clone_ipee() {
     # Create the folder for the IPEE library if it doesn't exist.
     if [ ! -d "$IPEE_LIB_FOLDER" ]; then
         mkdir "$IPEE_LIB_FOLDER"
@@ -96,18 +96,19 @@ function clone_ipee {
 
 # Check if the required files exist.
 ipee_exist=true
-if [ ! -f "lib/IPee/$f" ]; then
+if [ ! -f "lib/IPee/libIpEe.a" ]; then
     ipee_exist=false
 fi
 if [ "$ipee_exist" = false ]; then
-    for f in "libEpEeDictionary.a" "libEpEeContainer.a"; do
+    ipee_exist=true
+    for f in "libIpEeDictionary.a" "libIpEeContainer.a"; do
         if [ ! -f "lib/IPee/$f" ]; then
+            ipee_exist=false
             echo "File lib/IPee/$f does not exist."
             echo "We need to clone IPEE repository and build it up. Please wait."
             break
         fi
     done
-    ipee_exist=true
 fi
 
 # If required files don't exist, clone IPEE, else proceed with building.
