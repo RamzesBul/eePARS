@@ -1,6 +1,7 @@
 @echo off
 
 :: Move to the directory where the script is located.
+:: Move to the directory where the script is located.
 cd /d "%~dp0"
 
 :: Check if the required files exist.

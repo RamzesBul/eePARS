@@ -40,6 +40,12 @@ void release_client(p_client client) {
     free(client);
     
     client = NULL;
+    if (!client) return;
+        
+    mg_mgr_free(&client->manager);
+    free(client);
+    
+    client = NULL;
 }
 
 /*********************************************************************************************

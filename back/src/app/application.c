@@ -56,6 +56,8 @@ void release_application(p_application app) {
     free(app);
 
     app = NULL;
+
+    app = NULL;
 }
 
 /*********************************************************************************************

@@ -25,8 +25,12 @@
  * Singleton - one instance of service in the application.
  * Transient - new instance of service on each new request.
  * Glblvalue - global value.
+ * Glblvalue - global value.
  */
 typedef enum service_type_e {
+    SERVICE_TYPE_SINGLETON = 0, // One instance of service in the application.
+    SERVICE_TYPE_TRANSIENT = 1, // New instance of service on each new request.
+    SERVICE_TYPE_GLBLVALUE = 2, // Global value.
     SERVICE_TYPE_SINGLETON = 0, // One instance of service in the application.
     SERVICE_TYPE_TRANSIENT = 1, // New instance of service on each new request.
     SERVICE_TYPE_GLBLVALUE = 2, // Global value.
