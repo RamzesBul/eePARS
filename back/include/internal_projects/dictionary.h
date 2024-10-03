@@ -34,6 +34,7 @@ typedef struct record_s {
     struct record_s *prev; // Previous node reference.
     char *key;             // String key.
     void *value;           // Any type value.
+    void *metadata;        // Metadata.
 } record_t, *p_record;
 
 /**
@@ -50,9 +51,10 @@ typedef struct record_s {
  * The implementation is mutable, not thread-safe and not reentrant.
  */
 typedef struct dictionary_s {
-    p_record head; // Head of the dictionary.
-    p_record tail; // Tail of the dictionary.
-    int size;      // Size of the dictionary.
+    p_record head;  // Head of the dictionary.
+    p_record tail;  // Tail of the dictionary.
+    int size;       // Size of the dictionary.
+    void *metadata; // Metadata.
 } dictionary_t, *p_dictionary;
 
 /***********************************************************************************************
@@ -129,7 +131,8 @@ typedef void (*dictionary_iteration_records_callback_with_args)(p_record record,
  * @param dict Dictionary.
  * @return Mapped record.
  */
-typedef p_record (*dictionary_iteration_callback_map)(const p_record record, int index, const p_dictionary dict);
+typedef p_record (*dictionary_iteration_callback_map)(const p_record record, int index,
+                                                      const p_dictionary dict);
 
 /**
  * @brief Callback function for mapping records of collection.
@@ -140,7 +143,8 @@ typedef p_record (*dictionary_iteration_callback_map)(const p_record record, int
  * @param args Arguments for callback function.
  * @return Mapped record.
  */
-typedef p_record (*dictionary_iteration_callback_map_with_args)(const p_record record, int index, const p_dictionary dict, void *args);
+typedef p_record (*dictionary_iteration_callback_map_with_args)(const p_record record, int index, 
+                                                                const p_dictionary dict, void *args);
 
 /**
  * @brief Callback function for filtering records of collection.
@@ -150,7 +154,8 @@ typedef p_record (*dictionary_iteration_callback_map_with_args)(const p_record r
  * @param dict Dictionary.
  * @return Result of comparsion.
  */
-typedef int (*dictionary_iteration_callback_filter)(const p_record record, int index, const p_dictionary dict);
+typedef int (*dictionary_iteration_callback_filter)(const p_record record, int index,
+                                                    const p_dictionary dict);
 
 /**
  * @brief Callback function for filtering records of collection.
@@ -161,7 +166,8 @@ typedef int (*dictionary_iteration_callback_filter)(const p_record record, int i
  * @param args Arguments for callback function.
  * @return Result of comparsion.
  */
-typedef int (*dictionary_iteration_callback_filter_with_args)(const p_record record, int index, const p_dictionary dict, void *args);
+typedef int (*dictionary_iteration_callback_filter_with_args)(const p_record record, int index,
+                                                              const p_dictionary dict, void *args);
 
 /**
  * @brief Callback function for reducing records of collection.
@@ -172,7 +178,8 @@ typedef int (*dictionary_iteration_callback_filter_with_args)(const p_record rec
  * @param dict Dictionary.
  * @return Reduced record.
  */
-typedef p_record (*dictionary_iteration_callback_reduce)(void *acc, const p_record record, int index, const p_dictionary dict);
+typedef p_record (*dictionary_iteration_callback_reduce)(void *acc, const p_record record, int index,
+                                                         const p_dictionary dict);
 
 /**
  * @brief Callback function for reducing records of collection.
@@ -184,7 +191,8 @@ typedef p_record (*dictionary_iteration_callback_reduce)(void *acc, const p_reco
  * @param args Arguments for callback function.
  * @return Reduced record.
  */
-typedef p_record (*dictionary_iteration_callback_reduce_with_args)(void *acc, const p_record record, int index, const p_dictionary dict, void *args);
+typedef p_record (*dictionary_iteration_callback_reduce_with_args)(void *acc, const p_record record, int index,
+                                                                   const p_dictionary dict, void *args);
 
 /**
  * @brief Callback function for sorting records of collection.
@@ -221,6 +229,19 @@ typedef int (*dictionary_iteration_callback_sort_with_args)(const p_record recor
 extern p_dictionary create_dictionary(void);
 
 /**
+ * @brief Create dictionary.
+ * 
+ * @details
+ * Create a new empty dictionary.
+ * Fields are NULLs by default.
+ * 
+ * @param metadata Metadata.
+ *
+ * @return Dictionary.
+ */
+extern p_dictionary create_dictionary_with_metadata(void *metadata);
+
+/**
  * @brief Delete dictionary.
  * 
  * @details
@@ -244,6 +265,21 @@ extern void delete_dictionary(p_dictionary dict);
 extern void add_record_to_dictionary(const p_dictionary dict, char *key, void *value);
 
 /**
+ * @brief Add record to dictionary.
+ * 
+ * @details 
+ * Add a new record to specified dictionary.
+ * The record is identified by string key and contains value of any type.
+ *
+ * @param dict Dictionary object.
+ * @param key Record key.
+ * @param value Record value.
+ * @param metadata Record metadata.
+ */
+extern void add_record_to_dictionary_with_metadata(const p_dictionary dict, char *key,
+                                                   void *value, void *metadata);
+
+/**
  * @brief Add record to dictionary by index.
  * 
  * @details
@@ -256,6 +292,22 @@ extern void add_record_to_dictionary(const p_dictionary dict, char *key, void *v
  * @param value Record value.
  */
 extern void add_record_to_dictionary_by_index(const p_dictionary dict, int index, char *key, void *value);
+
+/**
+ * @brief Add record to dictionary by index.
+ * 
+ * @details
+ * Add a new record to specified dictionary by index.
+ * The record is identified by string key and contains value of any type.
+ *
+ * @param dict Dictionary object.
+ * @param index Record index.
+ * @param key Record key.
+ * @param value Record value.
+ * @param metadata Record metadata.
+ */
+extern void add_record_to_dictionary_by_index_with_metadata(const p_dictionary dict, int index, char *key,
+                                                            void *value, void *metadata);
 
 /**
  * @brief Remove record from dictionary.
@@ -572,7 +624,8 @@ extern void iterate_over_dictionary(const p_dictionary dict, dictionary_iteratio
  * @param callback Callback function.
  * @param args Arguments for callback function.
  */
-extern void iterate_over_dictionary_with_args(const p_dictionary dict, dictionary_iteration_callback_with_args callback, void *args);
+extern void iterate_over_dictionary_with_args(const p_dictionary dict, 
+                                              dictionary_iteration_callback_with_args callback, void *args);
 
 /**
  * @brief Iterate over keys of dictionary.
@@ -597,7 +650,8 @@ extern void iterate_over_dictionary_keys(const p_dictionary dict, dictionary_ite
  * @param callback Callback function.
  * @param args Arguments for callback function.
  */
-extern void iterate_over_dictionary_keys_with_args(const p_dictionary dict, dictionary_iteration_keys_callback_with_args callback, void *args);
+extern void iterate_over_dictionary_keys_with_args(const p_dictionary dict,
+                                                   dictionary_iteration_keys_callback_with_args callback, void *args);
 
 /**
  * @brief Iterate over values of dictionary.
@@ -622,7 +676,8 @@ extern void iterate_over_dictionary_values(const p_dictionary dict, dictionary_i
  * @param callback Callback function.
  * @param args Arguments for callback function.
  */
-extern void iterate_over_dictionary_values_with_args(const p_dictionary dict, dictionary_iteration_values_callback_with_args callback, void *args);
+extern void iterate_over_dictionary_values_with_args(const p_dictionary dict,
+                                                     dictionary_iteration_values_callback_with_args callback, void *args);
 
 /**
  * @brief Iterate over dictionary records.
@@ -647,7 +702,8 @@ extern void iterate_over_dictionary_records(const p_dictionary dict, dictionary_
  * @param callback Callback function.
  * @param args Arguments for callback function.
  */
-extern void iterate_over_dictionary_records_with_args(const p_dictionary dict, dictionary_iteration_records_callback_with_args callback, void *args);
+extern void iterate_over_dictionary_records_with_args(const p_dictionary dict,
+                                                      dictionary_iteration_records_callback_with_args callback, void *args);
 
 /**
  * @brief Map dictionary records.
@@ -674,7 +730,8 @@ extern p_dictionary map_dictionary(const p_dictionary dict, dictionary_iteration
  * @param args Arguments for callback function.
  * @return Mapped dictionary.
  */
-extern p_dictionary map_dictionary_with_args(const p_dictionary dict, dictionary_iteration_callback_map_with_args callback, void *args);
+extern p_dictionary map_dictionary_with_args(const p_dictionary dict,
+                                             dictionary_iteration_callback_map_with_args callback, void *args);
 
 /**
  * @brief Filter dictionary records.
@@ -702,7 +759,8 @@ extern p_dictionary filter_dictionary(const p_dictionary dict, dictionary_iterat
  * @param args Arguments for callback function.
  * @return Filtered dictionary.
  */
-extern p_dictionary filter_dictionary_with_args(const p_dictionary dict, dictionary_iteration_callback_filter_with_args callback, void *args);
+extern p_dictionary filter_dictionary_with_args(const p_dictionary dict,
+                                                dictionary_iteration_callback_filter_with_args callback, void *args);
 
 /**
  * @brief Reduce dictionary records.
@@ -731,7 +789,8 @@ extern void *reduce_dictionary(const p_dictionary dict, dictionary_iteration_cal
  * @param args Arguments for callback function.
  * @return Reduced dictionary.
  */
-extern void *reduce_dictionary_with_args(const p_dictionary dict, dictionary_iteration_callback_reduce_with_args callback, void *acc, void *args);
+extern void *reduce_dictionary_with_args(const p_dictionary dict,
+                                         dictionary_iteration_callback_reduce_with_args callback, void *acc, void *args);
 
 /**
  * @brief Sort dictionary records.
@@ -756,6 +815,7 @@ extern p_dictionary sort_dictionary(const p_dictionary dict, dictionary_iteratio
  * @param callback Callback function.
  * @param args Arguments for callback function.
  */
-extern p_dictionary sort_dictionary_with_args(const p_dictionary dict, dictionary_iteration_callback_sort_with_args callback, void *args);
+extern p_dictionary sort_dictionary_with_args(const p_dictionary dict,
+                                              dictionary_iteration_callback_sort_with_args callback, void *args);
 
 #endif // IPEE_DICTIONARY_H

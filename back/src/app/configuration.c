@@ -120,7 +120,8 @@ p_configuration init_configuration(void) {
 }
 
 p_configuration open_cfg_file(const char *path) {
-    p_wrap_configuration wrapped_cfg = get_service_from_global_container(name_of(p_configuration));
+    p_container container = get_container(name_of(main));
+    p_wrap_configuration wrapped_cfg = get_service_from_container(container, name_of(p_configuration));
 
     read_raw_json_data(wrapped_cfg, path);
 
@@ -149,14 +150,16 @@ static void read_raw_json_data(p_wrap_configuration wrapped_cfg, const char *pat
 }
 
 static p_configuration add_client_cfg(void) {
-    p_wrap_configuration wrapped_cfg = get_service_from_global_container(name_of(p_configuration));
+    p_container container = get_container(name_of(main));
+    p_wrap_configuration wrapped_cfg = get_service_from_container(container, name_of(p_configuration));
 
     wrapped_cfg->client_configuration = read_client_cfg(wrapped_cfg);
     return (p_configuration)wrapped_cfg;
 }
 
 static p_configuration add_server_cfg(void) {
-    p_wrap_configuration wrapped_cfg = get_service_from_global_container(name_of(p_configuration));
+    p_container container = get_container(name_of(main));
+    p_wrap_configuration wrapped_cfg = get_service_from_container(container, name_of(p_configuration));
 
     wrapped_cfg->server_configuration = read_server_cfg(wrapped_cfg);
     return (p_configuration)wrapped_cfg;

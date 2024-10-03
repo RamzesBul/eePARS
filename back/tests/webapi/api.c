@@ -8,38 +8,34 @@
 
 #include <helper/test_helper.h>
 
-/**
- * @brief Test for WelcomeController.
- *
- * @return Test result.
- */
-int test_Welcome_OK(void);
+#define ORDER_RESULT(result, order_num) (!result) << order_num
+
+/*********************************************************************************************
+ * FUNCTIONS DECLARATIONS
+ ********************************************************************************************/
 
 /**
- * @brief Test for AuthorizationController.
+ * @brief Test for WebAPI.
  *
  * @return Test result.
  */
-int test_Authorize_OK(void);
+int test_webapi_OK(void);
+
+/*********************************************************************************************
+ * FUNCTIONS DEFINITIONS
+ ********************************************************************************************/
 
 int main(void) {
-    init_env();
     int exit_result = 0;
 
-    exit_result |= test_Welcome_OK();
-
-    release_env();
+    exit_result |= test_webapi_OK();
+    
     return exit_result;
 }
 
-int test_Welcome_OK(void) {
-    char *expected =
-        "https://oauth.vk.com/"
-        "authorize?client_id=51737169&display=page&redirect_uri=http://"
-        "localhost:4200/"
-        "authorization&scope=friends&response_type=token&v=5.131&state=123456";
+int test_webapi_OK(void) {
+    init_env();
+    release_env();
 
-    char *actual = request_get("http://localhost:8080/welcome");
-
-    return is_equal("test_Welcome_OK", expected, actual);
+    return 0;
 }

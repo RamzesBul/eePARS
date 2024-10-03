@@ -11,7 +11,8 @@
  **********************************************************************************************/
 
 void authorization(struct mg_http_message *hm) {
-    p_server server = get_service_from_global_container(name_of(p_server));
+    p_container container = get_container(name_of(main));
+    p_server server = get_service_from_container(container, name_of(p_server));
 
     char *access_token_start = strstr(hm->query.ptr, "access_token=");
     char *access_token_end = strstr(hm->query.ptr, " HTTP");

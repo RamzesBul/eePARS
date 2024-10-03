@@ -2,7 +2,7 @@
 #define IPEE_MACRO_H
 
 /**
- * @brief Stringify parameter.
+ * @brief Returns stringified parameter.
  * 
  * @details
  * Converts parameter to string.

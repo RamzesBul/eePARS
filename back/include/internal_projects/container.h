@@ -11,7 +11,7 @@
 #ifndef IPEE_CONTAINER_H
 #define IPEE_CONTAINER_H
 
-#include <internal_projects/dictionary.h>
+#include <dictionary.h>
 
 /*********************************************************************************************
  * STRUCTS DECLARATIONS

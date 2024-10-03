@@ -63,23 +63,26 @@ void release_application(p_application app) {
  ********************************************************************************************/
 
 static p_application add_server(void) {
-    p_application app = get_service_from_global_container(name_of(p_application));
+    p_container container = get_container(name_of(main));
+    p_application app = get_service_from_container(container, name_of(p_application));
     if (!app) return NULL;
 
-    app->server = get_service_from_global_container(name_of(p_server));
+    app->server = get_service_from_container(container, name_of(p_server));
     return app;
 }
 
 static p_application add_client(void) {
-    p_application app = get_service_from_global_container(name_of(p_application));
+    p_container container = get_container(name_of(main));
+    p_application app = get_service_from_container(container, name_of(p_application));
     if (!app) return NULL;
     
-    app->client = get_service_from_global_container(name_of(p_client));
+    app->client = get_service_from_container(container, name_of(p_client));
     return app;
 }
 
 static void run(void) {
-    p_application app = get_service_from_global_container(name_of(p_application));
+    p_container container = get_container(name_of(main));
+    p_application app = get_service_from_container(container, name_of(p_application));
     if (app) {
         app->server->run(app->server);
         app->client->run(app->client);

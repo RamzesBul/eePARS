@@ -1,14 +1,15 @@
 # General
 .vscode/
-ignore/
 build/
 
 # Server
 back/.vscode/
 back/build/
 back/lib/mbedtls/
+back/lib/IPee
 back/include/external_projects/mbedtls/
 back/include/external_projects/psa/
+back/include/internal_projects/
 
 # Front
 front/.vscode/

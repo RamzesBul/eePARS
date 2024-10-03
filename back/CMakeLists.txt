@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set(PROJECT eePARS)
 project(${PROJECT})
-enable_testing()
-
+add_compile_options(-Wno-discarded-qualifiers -Wno-incompatible-pointer-types -Wno-int-conversion)
 
 # Project resources
 set(PROJECT_HEADER_PATH "${CMAKE_SOURCE_DIR}/include")
@@ -13,11 +12,8 @@ set(TEST_HEADER_PATH "${CMAKE_SOURCE_DIR}/tests")
 set(HEADER_PATH ${PROJECT_HEADER_PATH} ${EXTERNAL_HEADER_PATH} ${INTERNAL_HEADER_PATH} ${TEST_HEADER_PATH})
 
 set(MBEDTLS_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/mbedtls")
-set(LIBRARY_PATH ${MBEDTLS_LIB_PATH})
-
-set(IPEE_DICTIONARY "${CMAKE_SOURCE_DIR}/src/internal_projects/dictionary.c")
-set(IPEE_CONTAINER "${CMAKE_SOURCE_DIR}/src/internal_projects/container.c")
-set(INTERNAL_PROJECTS_SOURCES ${IPEE_DICTIONARY} ${IPEE_CONTAINER})
+set(IPEE_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/IPee")
+set(LIBRARY_PATH ${MBEDTLS_LIB_PATH} ${IPEE_LIB_PATH})
 
 set(CESANTA_SOURCES "${CMAKE_SOURCE_DIR}/src/external_projects/cesanta/mongoose.c" "${CMAKE_SOURCE_DIR}/src/external_projects/cesanta/frozen.c")
 set(EXTERNAL_PROJECTS_SOURCES ${CESANTA_SOURCES})
@@ -28,12 +24,12 @@ set(SERVER_SOURCES "${CMAKE_SOURCE_DIR}/src/server/server.c" "${CMAKE_SOURCE_DIR
 set(CONTROLLERS_SOURCES "${CMAKE_SOURCE_DIR}/src/server/controllers/authorization.c"
                         "${CMAKE_SOURCE_DIR}/src/server/controllers/welcome.c"
                         "${CMAKE_SOURCE_DIR}/src/server/controllers/server_control.c")
-set(LIB_SOURCES ${INTERNAL_PROJECTS_SOURCES} ${EXTERNAL_PROJECTS_SOURCES} ${APP_SOURCES} ${CLIENT_SOURCES} ${SERVER_SOURCES} ${CONTROLLERS_SOURCES})
+set(LIB_SOURCES ${EXTERNAL_PROJECTS_SOURCES} ${APP_SOURCES} ${CLIENT_SOURCES} ${SERVER_SOURCES} ${CONTROLLERS_SOURCES})
 
 if (WIN32)
-  set(LIB_BINARIES "ws2_32" "mbedtls" "mbedcrypto" "mbedx509" "bcrypt")
+  set(LIB_BINARIES "ws2_32" "mbedtls" "mbedcrypto" "mbedx509" "bcrypt" "IpEeContainer" "IpEeDictionary")
 elseif (UNIX)
-  set(LIB_BINARIES "mbedtls" "mbedcrypto" "mbedx509")
+  set(LIB_BINARIES "mbedtls" "mbedcrypto" "mbedx509" "IpEeContainer" "IpEeDictionary")
 endif()
 
 
@@ -50,4 +46,6 @@ file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION "${CMAKE_BINARY_DIR}")
 # Subdirectories
 add_subdirectory("${CMAKE_SOURCE_DIR}/lib") # Library
 add_subdirectory("${CMAKE_SOURCE_DIR}/src") # Application
+
+enable_testing()
 add_subdirectory("${CMAKE_SOURCE_DIR}/tests") # Tests
