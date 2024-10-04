@@ -1,7 +1,6 @@
 #include <server/controllers/server_control.h>
 
 #include <server/server.h>
-#include <client/client.h>
 #include <client/api.h>
 
 #include <container.h>

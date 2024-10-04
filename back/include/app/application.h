@@ -2,7 +2,6 @@
 #define EEPARS_APPLICATION_H
 
 #include <app/configuration.h>
-
 #include <client/client.h>
 #include <server/server.h>
 

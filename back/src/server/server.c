@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 
-#include <client/client.h>
 #include <cesanta/frozen.h>
 
 #include <app/configuration.h>
