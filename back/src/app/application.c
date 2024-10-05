@@ -2,10 +2,8 @@
 
 #include <stdlib.h>
 
-#include <client/client.h>
-#include <server/server.h>
-
 #include <container.h>
+#include <macro.h>
 
 /*********************************************************************************************
  * STATIC FUNCTIONS DECLARATIONS
@@ -14,23 +12,21 @@
 /**
  * @brief Run application.
  */
-static void run();
+static void run(void);
 
 /**
  * @brief Add server.
  *
- * @param cfg Configuration object.
  * @return Application object.
  */
-static p_application add_server(p_configuration cfg);
+static p_application add_server(void);
 
 /**
  * @brief Add client.
  *
- * @param cfg Configuration object.
  * @return Application object.
  */
-static p_application add_client(p_configuration cfg);
+static p_application add_client(void);
 
 /*********************************************************************************************
  * FUNCTIONS DEFINITIONS
@@ -57,30 +53,35 @@ void release_application(p_application app) {
     free(app);
 
     app = NULL;
+
+    app = NULL;
 }
 
 /*********************************************************************************************
  * STATIC FUNCTIONS DEFINITIONS
  ********************************************************************************************/
 
-static p_application add_server() {
-    p_application app = get_service_from_container(name_of(p_application));
+static p_application add_server(void) {
+    p_container container = get_container(name_of(main));
+    p_application app = get_service_from_container(container, name_of(p_application));
     if (!app) return NULL;
 
-    app->server = get_service_from_container(name_of(p_server));
+    app->server = get_service_from_container(container, name_of(p_server));
     return app;
 }
 
-static p_application add_client() {
-    p_application app = get_service_from_container(name_of(p_application));
+static p_application add_client(void) {
+    p_container container = get_container(name_of(main));
+    p_application app = get_service_from_container(container, name_of(p_application));
     if (!app) return NULL;
     
-    app->client = get_service_from_container(name_of(p_client));
+    app->client = get_service_from_container(container, name_of(p_client));
     return app;
 }
 
-static void run() {
-    p_application app = get_service_from_container(name_of(p_application));
+static void run(void) {
+    p_container container = get_container(name_of(main));
+    p_application app = get_service_from_container(container, name_of(p_application));
     if (app) {
         app->server->run(app->server);
         app->client->run(app->client);

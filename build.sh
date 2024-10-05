@@ -7,7 +7,7 @@ MBEDTLS_LIB_FOLDER=./back/mbedtls
 EXTERNAL_FOLDER=./include/external_projects
 
 # Function to clone MbedTLS if required files are missing.
-function clone_mbedtls {
+clone_mbedtls() {
     # Create the folder for the Mbed TLS library if it doesn't exist.
     if [ ! -d "$MBEDTLS_LIB_FOLDER" ]; then
         mkdir "$MBEDTLS_LIB_FOLDER"
@@ -35,24 +35,85 @@ function clone_mbedtls {
 
     # Clean up the source folder.
     echo "Deleting Mbed TLS source folder."
-    cd ../..
+    cd ../../..
     rm -rf mbedtls
 }
 
 # Check if the required files exist.
-files_exist=true
+mbedtls_exist=true
 for f in "libmbedcrypto.a" "libmbedtls.a" "libmbedx509.a"; do
-    if [ ! -f "$MBEDTLS_LIB_FOLDER/$f" ]; then
-        echo "File $MBEDTLS_LIB_FOLDER/$f does not exist."
+    if [ ! -f "back/lib/mbedtls/$f" ]; then
+        echo "File back/lib/mbedtls/$f does not exist."
         echo "We need to clone Mbed TLS repository and build it up. Please wait."
-        files_exist=false
+        mbedtls_exist=false
         break
     fi
 done
 
 # If required files don't exist, clone MbedTLS, else proceed with building.
-if [ "$files_exist" = false ]; then
+if [ "$mbedtls_exist" = false ]; then
     clone_mbedtls
+else
+    echo "All required files exist. We start building the project."
+fi
+
+IPEE_LIB_FOLDER=./back/ipee
+INTERNAL_FOLDER=./include/internal_projects
+
+# Function to clone IPEE if required files are missing.
+clone_ipee() {
+    # Create the folder for the IPEE library if it doesn't exist.
+    if [ ! -d "$IPEE_LIB_FOLDER" ]; then
+        mkdir "$IPEE_LIB_FOLDER"
+    fi
+
+    # Clone the IPEE repository.
+    echo "Cloning IPEE repository."
+    cd "$IPEE_LIB_FOLDER"
+    git clone -b v1.0 https://github.com/cMeWHou/IPee.git
+    cd IPee
+
+    # Build the IPEE library.
+    echo "Building IPEE."
+    cmake -S . -B build/ -G "Unix Makefiles"
+    cmake --build build/ --target all --config Release
+
+    # Copy the built libraries and headers.
+    echo "Copying built libraries and headers."
+    mkdir -p "../../$INTERNAL_FOLDER/"
+    cp include/dictionary.h "../../$INTERNAL_FOLDER"
+    cp include/container.h "../../$INTERNAL_FOLDER"
+    cp include/macro.h "../../$INTERNAL_FOLDER"
+    mkdir -p "../../lib/IPee"
+    cp build/libIpEeDictionary.a "../../lib/IPee"
+    cp build/libIpEeContainer.a "../../lib/IPee"
+
+    # Clean up the source folder.
+    echo "Deleting IPEE source folder."
+    cd ../../..
+    rm -rf ipee
+}
+
+# Check if the required files exist.
+ipee_exist=true
+if [ ! -f "lib/IPee/libIpEe.a" ]; then
+    ipee_exist=false
+fi
+if [ "$ipee_exist" = false ]; then
+    ipee_exist=true
+    for f in "libIpEeDictionary.a" "libIpEeContainer.a"; do
+        if [ ! -f "lib/IPee/$f" ]; then
+            ipee_exist=false
+            echo "File lib/IPee/$f does not exist."
+            echo "We need to clone IPEE repository and build it up. Please wait."
+            break
+        fi
+    done
+fi
+
+# If required files don't exist, clone IPEE, else proceed with building.
+if [ "$ipee_exist" = false ]; then
+    clone_ipee
 else
     echo "All required files exist. We start building the project."
 fi

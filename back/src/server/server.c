@@ -2,13 +2,13 @@
 
 #include <stdlib.h>
 
-#include <client/client.h>
 #include <cesanta/frozen.h>
 
 #include <app/configuration.h>
 #include <server/api.h>
 
 #include <container.h>
+#include <macro.h>
 
 /***********************************************************************************************
  * CONTROLLERS HEADERS
@@ -50,16 +50,18 @@ static void server_event_handler(struct mg_connection *c, int ev, void *ev_data,
  * FUNCTIONS DEFINITIONS
  **********************************************************************************************/
 
-p_server init_server() {
+p_server init_server(void) {
+    p_container container = get_container(name_of(main));
     p_server server = (p_server)malloc(sizeof(server_t));
     if (!server) return NULL;
 
-    p_configuration configuration = get_service_from_container(name_of(p_configuration));
+    p_configuration configuration = get_service_from_container(container, name_of(p_configuration));
     p_server_configuration server_cfg = configuration->server_configuration;
 
     server->configuration = server_cfg;
     server->run = run;
     server->server_state = SERVER_STATE_STOPPED;
+    mg_mgr_init(&server->manager);
     
     return server;
 }
@@ -67,8 +69,9 @@ p_server init_server() {
 void release_server(p_server server) {
     if (!server) return;
     
-    mg_mgr_free(&server->manager);
-    free(server);        
+    if (&server->manager)
+        mg_mgr_free(&server->manager);
+    free(server);
     
     server = NULL;
 }
@@ -84,9 +87,7 @@ static void run(p_server server) {
 static void *server_thread_run(void *args) {
     p_server server = (p_server)args;
 
-    mg_mgr_init(&server->manager);
     mg_http_listen(&server->manager, server->configuration->host, server_event_handler, NULL);
-    
     server->server_state = SERVER_STATE_RUNNING;
     while (server->server_state) mg_mgr_poll(&server->manager, 1000);
 
@@ -95,7 +96,8 @@ static void *server_thread_run(void *args) {
 
 static void server_event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
     if (ev == MG_EV_HTTP_MSG) {
-        p_server server = get_service_from_container(name_of(p_server));
+        p_container container = get_container(name_of(main));
+        p_server server = get_service_from_container(container, name_of(p_server));
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
 
         if (invoke_controller("/authorization", hm, authorization) ||

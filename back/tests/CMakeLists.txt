@@ -1,4 +1,4 @@
-include(Dart)
+include(CTest)
 
 
 # WebAPI test

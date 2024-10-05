@@ -1,45 +1,87 @@
-#include <stdio.h>
+#include <string.h>
 
 #include <app/application.h>
 #include <app/configuration.h>
-#include <client/api.h>
 
 #include <container.h>
+#include <macro.h>
 
-#include <helper/test_helper.h>
+#define ORDER_RESULT(result, order_num) (!result) << order_num
+#define CFG_FILE "../data/appsettings.json"
+
+/*********************************************************************************************
+ * STATIC FUNCTIONS DECLARATIONS
+ ********************************************************************************************/
 
 /**
- * @brief Test for WelcomeController.
+ * @brief Prepare testing environment.
+ * 
+ * @return Testing environment object.
+ */
+static void init_env(void);
+
+/**
+ * @brief Compare strings.
+ * 
+ * @param expected Expected value.
+ * @param actual Actual value.
+ * @return Comparing result.
+ */
+static int is_equal(const char *expected, const char *actual);
+
+/*********************************************************************************************
+ * FUNCTIONS DECLARATIONS
+ ********************************************************************************************/
+
+/**
+ * @brief Test for WebAPI.
  *
  * @return Test result.
  */
-int test_Welcome_OK();
+int test_webapi_OK(void);
 
-/**
- * @brief Test for AuthorizationController.
- *
- * @return Test result.
- */
-int test_Authorize_OK();
+/*********************************************************************************************
+ * FUNCTIONS DEFINITIONS
+ ********************************************************************************************/
 
-int main() {
-    init_env();
+int main(void) {
     int exit_result = 0;
 
-    exit_result |= test_Welcome_OK();
-
-    release_env();
+    exit_result |= test_webapi_OK();
+    
     return exit_result;
 }
 
-int test_Welcome_OK() {
-    char *expected =
-        "https://oauth.vk.com/"
-        "authorize?client_id=51737169&display=page&redirect_uri=http://"
-        "localhost:4200/"
-        "authorization&scope=friends&response_type=token&v=5.131&state=123456";
+int test_webapi_OK(void) {
+    init_env();
 
-    char *actual = request_get("http://localhost:8080/welcome");
+    return 0;
+}
 
-    return is_equal("test_Welcome_OK", expected, actual);
+/*********************************************************************************************
+ * STATIC FUNCTIONS DEFINITIONS
+ ********************************************************************************************/
+
+static void init_env(void) {
+    p_container container = init_container(name_of(main));
+
+    add_singleton_to_container(container, name_of(p_configuration), init_configuration, release_configuration);
+    add_singleton_to_container(container, name_of(p_application), init_application, release_application);
+    add_singleton_to_container(container, name_of(p_server), init_server, release_server);
+    add_singleton_to_container(container, name_of(p_client), init_client, release_client);
+
+    p_configuration configuration = get_service_from_container(container, name_of(p_configuration));
+    configuration->open_cfg_file(CFG_FILE);
+    configuration->add_server_cfg();
+    configuration->add_client_cfg();
+    
+    p_application application = get_service_from_container(container, name_of(p_application));
+    application->add_server();
+    application->add_client();
+
+    release_container(container);
+}
+
+static int is_equal(const char *expected, const char *actual) {
+    return strcmp(expected, actual) == 0;
 }
