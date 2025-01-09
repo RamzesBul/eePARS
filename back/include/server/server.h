@@ -14,7 +14,7 @@
 /**
  * @brief Server state configuration.
  */
-typedef enum server_state_s {
+typedef enum server_state_e {
     SERVER_STATE_STOPPED = 0, // Server stopped.
     SERVER_STATE_RUNNING = 1  // Server running.
 } server_state_t, *p_server_state;
@@ -36,14 +36,14 @@ typedef struct server_s {
 
 /**
  * @brief Initialize server.
- * 
+ *
  * @return Server object.
  */
 extern p_server init_server(void);
 
 /**
  * @brief Release server.
- * 
+ *
  * @param server Server.
  */
 extern void release_server(p_server server);

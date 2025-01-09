@@ -1,5 +1,5 @@
-#ifndef CONTROLLERS_WELCOME_H
-#define CONTROLLERS_WELCOME_H
+#ifndef CONTROLLERS_REGISTRATION_H
+#define CONTROLLERS_REGISTRATION_H
 
 #include <cesanta/mongoose.h>
 
@@ -8,10 +8,10 @@
  ********************************************************************************************/
 
 /**
- * @brief Welcome controller.
+ * @brief Registartion controller.
  *
  * @param hm HTTP message.
  */
-extern void *welcome(struct mg_http_message *hm);
+extern void *registration(struct mg_http_message *hm);
 
-#endif // CONTROLLERS_WELCOME_H
+#endif // CONTROLLERS_REGISTRATION_H

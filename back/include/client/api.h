@@ -8,7 +8,7 @@
 /**
  * @brief Send GET request.
  *
- * @param url - URL.
+ * @param url - Target URL.
  * @return Response.
  */
 extern char *request_get(const char *url);

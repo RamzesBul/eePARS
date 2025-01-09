@@ -25,14 +25,14 @@ typedef struct client_s {
 
 /**
  * @brief Initialize client.
- * 
+ *
  * @return Client object.
  */
 extern p_client init_client(void);
 
 /**
  * @brief Release client.
- * 
+ *
  * @param client Client object.
  */
 extern void release_client(p_client client);
