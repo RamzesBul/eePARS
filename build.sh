@@ -8,6 +8,8 @@ EXTERNAL_FOLDER=./include/external_projects
 
 # Function to clone MbedTLS if required files are missing.
 clone_mbedtls() {
+    cd "$(dirname "$0")"
+
     # Create the folder for the Mbed TLS library if it doesn't exist.
     if [ ! -d "$MBEDTLS_LIB_FOLDER" ]; then
         mkdir "$MBEDTLS_LIB_FOLDER"
@@ -16,7 +18,7 @@ clone_mbedtls() {
     # Clone the Mbed TLS repository.
     echo "Cloning Mbed TLS repository."
     cd "$MBEDTLS_LIB_FOLDER"
-    git clone -b v2.28.6 https://github.com/Mbed-TLS/mbedtls.git
+    git clone -b v3.6.2 https://github.com/Mbed-TLS/mbedtls.git
     cd mbedtls
 
     # Build the Mbed TLS library.
@@ -35,8 +37,8 @@ clone_mbedtls() {
 
     # Clean up the source folder.
     echo "Deleting Mbed TLS source folder."
-    cd ../../..
-    rm -rf mbedtls
+    cd "$(dirname "$0")"
+    rm -rf "$MBEDTLS_LIB_FOLDER"
 }
 
 # Check if the required files exist.
@@ -62,6 +64,8 @@ INTERNAL_FOLDER=./include/internal_projects
 
 # Function to clone IPEE if required files are missing.
 clone_ipee() {
+    cd "$(dirname "$0")"
+
     # Create the folder for the IPEE library if it doesn't exist.
     if [ ! -d "$IPEE_LIB_FOLDER" ]; then
         mkdir "$IPEE_LIB_FOLDER"
@@ -70,7 +74,7 @@ clone_ipee() {
     # Clone the IPEE repository.
     echo "Cloning IPEE repository."
     cd "$IPEE_LIB_FOLDER"
-    git clone -b v1.0 https://github.com/cMeWHou/IPee.git
+    git clone -b v1.7 https://github.com/cMeWHou/IPee.git
     cd IPee
 
     # Build the IPEE library.
@@ -83,15 +87,19 @@ clone_ipee() {
     mkdir -p "../../$INTERNAL_FOLDER/"
     cp include/dictionary.h "../../$INTERNAL_FOLDER"
     cp include/container.h "../../$INTERNAL_FOLDER"
+    cp include/threadpool.h "../../$INTERNAL_FOLDER"
+    cp include/event.h "../../$INTERNAL_FOLDER"
     cp include/macro.h "../../$INTERNAL_FOLDER"
     mkdir -p "../../lib/IPee"
     cp build/libIpEeDictionary.a "../../lib/IPee"
     cp build/libIpEeContainer.a "../../lib/IPee"
+    cp build/libIpEeEvent.a "../../lib/IPee"
+    cp build/libIpEeThreadpool.a "../../lib/IPee"
 
     # Clean up the source folder.
     echo "Deleting IPEE source folder."
-    cd ../../..
-    rm -rf ipee
+    cd "$(dirname "$0")"
+    rm -rf "$IPEE_LIB_FOLDER"
 }
 
 # Check if the required files exist.
@@ -101,10 +109,10 @@ if [ ! -f "lib/IPee/libIpEe.a" ]; then
 fi
 if [ "$ipee_exist" = false ]; then
     ipee_exist=true
-    for f in "libIpEeDictionary.a" "libIpEeContainer.a"; do
-        if [ ! -f "lib/IPee/$f" ]; then
+    for f in "libIpEeDictionary.a" "libIpEeContainer.a" "libIpEeThreadpool.a"; do
+        if [ ! -f "back/lib/IPee/$f" ]; then
             ipee_exist=false
-            echo "File lib/IPee/$f does not exist."
+            echo "File back/lib/IPee/$f does not exist."
             echo "We need to clone IPEE repository and build it up. Please wait."
             break
         fi

@@ -2,12 +2,11 @@ include(CTest)
 
 
 # WebAPI test
-add_executable(${WEBAPI_TEST} "${CMAKE_SOURCE_DIR}/tests/webapi/api.c")
+add_executable(${PROJECT_TEST} "${CMAKE_SOURCE_DIR}/tests/webapi/api.c")
 
-target_include_directories(${WEBAPI_TEST} PUBLIC ${HEADER_PATH})
-target_link_directories(${WEBAPI_TEST} PUBLIC ${LIBRARY_PATH})
-target_link_libraries(${WEBAPI_TEST} ${PROJECT_LIB})
+target_include_directories(${PROJECT_TEST} PRIVATE ${HEADER_PATH})
+target_link_libraries(${PROJECT_TEST} PRIVATE ${PROJECT_LIB})
 
 
 # Tests
-add_test(NAME ${WEBAPI_TEST} COMMAND $<TARGET_FILE:${WEBAPI_TEST}>)
+add_test(NAME ${PROJECT_TEST} COMMAND $<TARGET_FILE:${PROJECT_TEST}>)

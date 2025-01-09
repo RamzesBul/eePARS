@@ -1,4 +1,5 @@
 {
 	"HOST_URI": "http://localhost:8080",
-	"CORS_POLICY": "Access-Control-Allow-Origin: *\r\n"
+	"CORS_POLICY": "Access-Control-Allow-Origin: *\r\n",
+	"POSTGRES_DB_CONNECTION": "user=eepars_user password=eepars_user dbname=eepars host=localhost port=5432 options='-csearch_path=eepars'"
 }

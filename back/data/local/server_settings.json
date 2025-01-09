@@ -1,4 +1,0 @@
-{
-	"HOST_URI": "http://localhost:8080",
-	"CORS_POLICY": "Access-Control-Allow-Origin: *\r\n"
-}
