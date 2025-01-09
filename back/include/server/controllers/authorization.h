@@ -9,9 +9,9 @@
 
 /**
  * @brief Authorization controller.
- * 
+ *
  * @param hm HTTP message.
  */
-extern void authorization(struct mg_http_message *hm);
+extern void *authorization(struct mg_http_message *hm);
 
 #endif // CONTROLLERS_AUTHORIZATION_H

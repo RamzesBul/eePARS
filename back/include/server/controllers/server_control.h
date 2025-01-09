@@ -9,9 +9,9 @@
 
 /**
  * @brief Server control controller.
- * 
+ *
  * @param hm HTTP message.
  */
-extern void server_control(struct mg_http_message *hm);
+extern void *server_control(struct mg_http_message *hm);
 
 #endif // CONTROLLERS_SERVER_CONTROL_H

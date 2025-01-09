@@ -1,7 +1,8 @@
 #include <server/controllers/authorization.h>
 
-#include <server/server.h>
-#include <client/api.h>
+#include <db/db_connection.h>
+#include <server/api.h>
+#include <user/user.h>
 
 #include <container.h>
 #include <macro.h>
@@ -10,25 +11,28 @@
  * FUNCTIONS DEFINITIONS
  **********************************************************************************************/
 
-void authorization(struct mg_http_message *hm) {
+void *authorization(struct mg_http_message *hm) {
     p_container container = get_container(name_of(main));
-    p_server server = get_service_from_container(container, name_of(p_server));
+    p_user user = get_service_from_container_with_args(container, name_of(p_user), hm);
 
-    char *access_token_start = strstr(hm->query.ptr, "access_token=");
-    char *access_token_end = strstr(hm->query.ptr, " HTTP");
-    int access_token_length = (int)((long long)access_token_end - (long long)access_token_start);
+    if (user)
+        return user->token;
 
-    if (!access_token_start || !access_token_end || !access_token_length) {
-        return;
-    }
+    const char *login = from_query(hm, name_of(login));
+    const char *password = from_query(hm, name_of(password));
 
-    char token[256];
-    strncpy(token, access_token_start, access_token_length);
-    token[access_token_length] = 0;
+    const char *get_user_sql = stringify(
+        select id from eepars_user eu where eu.login =
+        $1 and eu.password = $2;
+    );
+    const char ***get_user_query_result = query(get_user_sql, 2, login, password);
 
-    char request_buff[512];
-    sprintf(request_buff, "https://api.vk.com/method/account.getProfileInfo?%s&v=5.154", token);
+    const char *create_new_token_sql = stringify(
+        insert into user_auth_history(user_id, token, expiration_date)
+        values($1, extract(epoch from current_timestamp)::varchar, current_timestamp + interval '1 hour');
+        returning token;
+    );
+    const char ***result = query(create_new_token_sql, 1, ***get_user_query_result);
 
-    char *response = request_get(request_buff);
-    mg_http_reply(server->manager.conns, 200, server->configuration->cors_policy, "%s", response);
+    return ***result;
 }
