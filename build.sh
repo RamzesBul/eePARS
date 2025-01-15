@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Move to the directory where the script is located.
-cd "$(dirname "$0")"
+SCRIPT_ROOT_FOLDER="$(pwd)"
+cd "$SCRIPT_ROOT_FOLDER"
 
 MBEDTLS_LIB_FOLDER=./back/mbedtls
 EXTERNAL_FOLDER=./include/external_projects
 
 # Function to clone MbedTLS if required files are missing.
 clone_mbedtls() {
-    cd "$(dirname "$0")"
+    cd "$SCRIPT_ROOT_FOLDER"
 
     # Create the folder for the Mbed TLS library if it doesn't exist.
     if [ ! -d "$MBEDTLS_LIB_FOLDER" ]; then
@@ -38,7 +38,7 @@ clone_mbedtls() {
 
     # Clean up the source folder.
     echo "Deleting Mbed TLS source folder."
-    cd "$(dirname "$0")"
+    cd "$SCRIPT_ROOT_FOLDER"
     rm -rf "$MBEDTLS_LIB_FOLDER"
 }
 
@@ -65,7 +65,7 @@ INTERNAL_FOLDER=./include/internal_projects
 
 # Function to clone IPEE if required files are missing.
 clone_ipee() {
-    cd "$(dirname "$0")"
+    cd "$SCRIPT_ROOT_FOLDER"
 
     # Create the folder for the IPEE library if it doesn't exist.
     if [ ! -d "$IPEE_LIB_FOLDER" ]; then
@@ -99,7 +99,7 @@ clone_ipee() {
 
     # Clean up the source folder.
     echo "Deleting IPEE source folder."
-    cd "$(dirname "$0")"
+    cd "$SCRIPT_ROOT_FOLDER"
     rm -rf "$IPEE_LIB_FOLDER"
 }
 
