@@ -34,6 +34,7 @@ echo Cloning Mbed TLS repository.
 cd %MBEDTLS_LIB_FOLDER%
 git clone -b v3.6.2 https://github.com/Mbed-TLS/mbedtls.git
 cd mbedtls
+git submodule update --init
 
 :: Build the Mbed TLS library.
 echo Building Mbed TLS.
@@ -65,6 +66,7 @@ if exist "back\lib\IPee\libIpEe.a" (
 for %%f in (
     "libIpEeDictionary.a"
     "libIpEeContainer.a"
+    "libIpEeEvent.a"
     "libIpEeThreadpool.a"
 ) do (
     if not exist "back\lib\IPee\%%~f" (
