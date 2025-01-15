@@ -20,6 +20,7 @@ clone_mbedtls() {
     cd "$MBEDTLS_LIB_FOLDER"
     git clone -b v3.6.2 https://github.com/Mbed-TLS/mbedtls.git
     cd mbedtls
+    git submodule update --init
 
     # Build the Mbed TLS library.
     echo "Building Mbed TLS."
@@ -109,7 +110,7 @@ if [ ! -f "lib/IPee/libIpEe.a" ]; then
 fi
 if [ "$ipee_exist" = false ]; then
     ipee_exist=true
-    for f in "libIpEeDictionary.a" "libIpEeContainer.a" "libIpEeThreadpool.a"; do
+    for f in "libIpEeDictionary.a" "libIpEeContainer.a" "libIpEeEvent.a" "libIpEeThreadpool.a"; do
         if [ ! -f "back/lib/IPee/$f" ]; then
             ipee_exist=false
             echo "File back/lib/IPee/$f does not exist."
