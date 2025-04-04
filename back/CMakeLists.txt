@@ -30,6 +30,7 @@ set(SERVER_SOURCES "${CMAKE_SOURCE_DIR}/src/server/server.c" "${CMAKE_SOURCE_DIR
 set(CONTROLLERS_SOURCES "${CMAKE_SOURCE_DIR}/src/server/controllers/authorization.c"
                         "${CMAKE_SOURCE_DIR}/src/server/controllers/registration.c"
                         "${CMAKE_SOURCE_DIR}/src/server/controllers/welcome.c"
+                        "${CMAKE_SOURCE_DIR}/src/server/controllers/user.c"
                         "${CMAKE_SOURCE_DIR}/src/server/controllers/server_control.c")
 set(DATABASE_SOURCES "${CMAKE_SOURCE_DIR}/src/db/postgres.c" "${CMAKE_SOURCE_DIR}/src/db/db_connection.c")
 set(USER_SOURCES "${CMAKE_SOURCE_DIR}/src/user/user.c")

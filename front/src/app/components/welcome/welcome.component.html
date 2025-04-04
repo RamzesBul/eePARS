@@ -1,15 +1,15 @@
-<ng-container *ngIf="(tokenUrl$ | async) as tokenUrl; else loading">
-  <div class="flex-center">
-    <button mat-flat-button
-      color="primary"
-      (click)="onLogInButtonClick(tokenUrl)">
-      Log In with VK<mat-icon>login</mat-icon>
-    </button>
-  </div>
-</ng-container>
-
-<ng-template #loading>
+@if (!showLoader()) {
+  @if (user$ | async; as user) {
+    <div class="flex-center">
+      <mat-icon>info</mat-icon>Welcome, {{ user.login }}
+    </div>
+  } @else {
+    <div class="flex-center">
+      <mat-icon>warning</mat-icon>You're not logged in
+    </div>
+  }
+} @else {
   <div class="flex-center">
     <mat-spinner></mat-spinner>
   </div>
-</ng-template>
+}

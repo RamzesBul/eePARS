@@ -1,0 +1,40 @@
+<mat-toolbar class="toolbar" color="primary">
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>eePARS</span>
+  <span class="spacer"></span>
+  <button mat-icon-button>
+    <mat-icon>info</mat-icon>
+  </button>
+  @if (user$ | async; as user) {
+    <button mat-icon-button title="Выход" (click)="onLogoutClick()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  } @else {
+    <button mat-icon-button title="Авторизация" (click)="onLoginClick()">
+      <mat-icon>login</mat-icon>
+    </button>
+  }
+</mat-toolbar>
+<mat-drawer-container class="container">
+  <mat-drawer #sidenav class="container-sidenav" mode="side">
+    @if (user$ | async; as user) {
+      <button mat-flat-button class="container-sidenav-element" (click)="onProfileClick()">
+        <mat-icon>person</mat-icon>Account
+      </button>
+      <button mat-flat-button class="container-sidenav-element">
+        <mat-icon>trending_up</mat-icon>Statistic
+      </button>
+    }
+    <button mat-flat-button class="container-sidenav-element" (click)="openRepository()">
+      <mat-icon>code</mat-icon>GitHub
+    </button>
+    <button mat-flat-button class="container-sidenav-element" (click)="onGameClick()">
+      <mat-icon>diamond</mat-icon>Fun
+    </button>
+  </mat-drawer>
+  <mat-drawer-content class="content">
+    <ng-content></ng-content>
+  </mat-drawer-content>
+</mat-drawer-container>

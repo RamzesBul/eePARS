@@ -1,1 +1,6 @@
-<p>profile works!</p>
+@if (user$ | async; as user) {
+  <div>User identified: {{ user.id }}</div>
+  <div>User login: {{ user.login }} ({{ user.email }})</div>
+  <div>User role: {{ user.role }}</div>
+  <div>Score: {{ user.score }}</div>
+}
