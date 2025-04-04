@@ -1,25 +1,24 @@
-<ng-container *ngIf="(userInfo$ | async)?.response as data; else loading">
-  <div class="flex-center">
-    <mat-card class="user-card">
-      <mat-card-header>
-        <mat-card-title-group>
-          <mat-card-title>
-            {{data.account_verification_profile.first_name}}
-            {{data.account_verification_profile.middle_name}}
-          </mat-card-title>
-          <mat-card-subtitle>{{data.screen_name}}</mat-card-subtitle>
-          <img mat-card-sm-image [src]="data.photo_200" alt="user_photo">
-        </mat-card-title-group>
-      </mat-card-header>
-      <mat-card-content>
-        {{data.status}}
-      </mat-card-content>
-    </mat-card>
+@if (!showLoader()) {
+  <div class="flex-center auth-form">
+    <mat-form-field>
+      <mat-label>User login</mat-label>
+      <input matInput [(ngModel)]="login">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>User password</mat-label>
+      <input type="password" matInput [(ngModel)]="password">
+    </mat-form-field>
+    <div class="auth-form-button">
+      <button mat-flat-button (click)="onLoginClick()">
+        Log in
+      </button>
+      <div>
+        or <a (click)="onRegisterClick()">register</a>
+      </div>
+    </div>
   </div>
-</ng-container>
-
-<ng-template #loading>
+} @else {
   <div class="flex-center">
     <mat-spinner></mat-spinner>
   </div>
-</ng-template>
+}

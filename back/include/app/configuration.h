@@ -6,26 +6,13 @@
  ********************************************************************************************/
 
 /**
- * @brief VK API client configuration.
- *
- * @details
- * It contains the target URL and the certificate to be used for the connection
- * to the VK API.
- */
-typedef struct vk_client_configuration_s {
-    char *url;  // Target URL.
-    char *cert; // Certificate.
-} vk_client_configuration_t, *p_vk_client_configuration;
-
-/**
  * @brief Client configuration.
  *
  * @details
  * It contains configurations to connect to the others services.
  */
-typedef struct client_configuration_s {
-    p_vk_client_configuration vk_cfg; // VK API configuration.
-} client_configuration_t, *p_client_configuration;
+typedef struct client_configuration_s {}
+client_configuration_t, *p_client_configuration;
 
 /**
  * @brief Server configuration.
@@ -34,7 +21,7 @@ typedef struct client_configuration_s {
  * It contains the server policies and settings.
  */
 typedef struct server_configuration_s {
-    char *host;                   // Server host.
+    char *host;                   // Server host address.
     char *cors_policy;            // CORS policy.
     char *postrges_db_connection; // Postrges DB connection.
 } server_configuration_t, *p_server_configuration;
@@ -48,10 +35,6 @@ typedef struct server_configuration_s {
 typedef struct configuration_s {
     p_client_configuration client_configuration; // Client configuration.
     p_server_configuration server_configuration; // Server configuration.
-
-    struct configuration_s *(*open_cfg_file)(void);  // Open configuration file.
-    struct configuration_s *(*add_client_cfg)(void); // Add VK API configuration.
-    struct configuration_s *(*add_server_cfg)(void); // Add server configuration.
 } configuration_t, *p_configuration;
 
 /*********************************************************************************************

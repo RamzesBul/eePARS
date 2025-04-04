@@ -74,31 +74,16 @@ int test_webapi_OK(void) {
 
 static void init_env(void) {
     p_container container = init_container(name_of(main));
-    add_glblvalue_to_container(container, name_of(CONFIG_FILE_PATH),
-                               config_file_path, NULL);
-    add_singleton_to_container(container, name_of(p_configuration),
-                               init_configuration, release_configuration);
-    add_singleton_to_container(container, name_of(p_application),
-                               init_application, release_application);
-    add_singleton_to_container(container, name_of(p_server), init_server,
-                               release_server);
-    add_singleton_to_container(container, name_of(p_client), init_client,
-                               release_client);
-    add_singleton_to_container(container, name_of(p_postgres), init_postgres,
-                               release_postgres);
-    add_transient_to_container(container, name_of(p_connection),
-                               init_connection, release_connection);
+    add_glblvalue_to_container(container, name_of(CONFIG_FILE_PATH), config_file_path, NULL);
+    add_singleton_to_container(container, name_of(p_configuration), init_configuration, release_configuration);
+    add_singleton_to_container(container, name_of(p_application), init_application, release_application);
+    add_singleton_to_container(container, name_of(p_server), init_server, release_server);
+    add_singleton_to_container(container, name_of(p_client), init_client, release_client);
+    add_singleton_to_container(container, name_of(p_postgres), init_postgres, release_postgres);
+    add_transient_to_container(container, name_of(p_connection), init_connection, release_connection);
 
-    p_configuration configuration =
-        get_service_from_container(container, name_of(p_configuration));
-    configuration->open_cfg_file();
-    configuration->add_server_cfg();
-    configuration->add_client_cfg();
-
-    p_application application =
-        get_service_from_container(container, name_of(p_application));
-    application->add_server_api();
-    application->add_client_api();
+    p_configuration configuration = get_service_from_container(container, name_of(p_configuration));
+    p_application application = get_service_from_container(container, name_of(p_application));
 
     release_container(container);
 }

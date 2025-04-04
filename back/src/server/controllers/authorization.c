@@ -18,21 +18,30 @@ void *authorization(struct mg_http_message *hm) {
     if (user)
         return user->token;
 
-    const char *login = from_query(hm, name_of(login));
-    const char *password = from_query(hm, name_of(password));
+    const char *login = from_body(hm, name_of(login));
+    const char *password = from_body(hm, name_of(password));
 
     const char *get_user_sql = stringify(
-        select id from eepars_user eu where eu.login =
-        $1 and eu.password = $2;
+        select id
+        from eepars_user eu
+        where eu.login = $1
+          and eu.password = $2;
     );
-    const char ***get_user_query_result = query(get_user_sql, 2, login, password);
+    p_db_result user_query_result = query(get_user_sql, 2, login, password);
+    const char *user_result = release_db_result(user_query_result, 1, 1);
+
+    if (!user_result)
+        return NULL;
 
     const char *create_new_token_sql = stringify(
         insert into user_auth_history(user_id, token, expiration_date)
-        values($1, extract(epoch from current_timestamp)::varchar, current_timestamp + interval '1 hour');
+        values($1::integer, extract(epoch from current_timestamp)::integer::varchar, current_timestamp + interval '1 hour')
         returning token;
     );
-    const char ***result = query(create_new_token_sql, 1, ***get_user_query_result);
+    p_db_result token_query_result = query(create_new_token_sql, 1, user_result);
+    free(user_result);
 
-    return ***result;
+    const char *token_result = release_db_result(token_query_result, 1, 1);
+
+    return token_result;
 }

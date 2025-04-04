@@ -37,18 +37,8 @@ int main(int argc, char *argv[]) {
     p_container container = init_container(name_of(main));
     register_services(container);
     
-    // Set configuration.
     const p_configuration configuration = get_service_from_container(container, name_of(p_configuration));
-    configuration->open_cfg_file();
-    configuration->add_server_cfg();
-    configuration->add_client_cfg();
-    
-    // Connfiguring application.
     const p_application application = get_service_from_container(container, name_of(p_application));
-    application->add_server_api();
-    application->add_client_api();
-    
-    // Running application.
     application->run();
     
     release_container(container);

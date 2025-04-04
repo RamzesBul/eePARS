@@ -19,7 +19,6 @@ typedef struct fn_data_s {
     const char *url; // Target URL.
     int done;        // Response flag.
     char *response;  // Response data.
-    p_client client; // Client object.
 } fn_data_t, *p_fn_data;
 
 /*********************************************************************************************
@@ -44,7 +43,7 @@ char *request_get(const char *url) {
     p_container container = get_container(name_of(main));
     p_client client = get_service_from_container(container, name_of(p_client));
 
-    fn_data_t fn_data = { .url = url, .done = 0, .response = NULL, .client = client };
+    fn_data_t fn_data = { .url = url, .done = 0, .response = NULL };
 
     client->connection = mg_http_connect(&client->manager, url, request_callback, &fn_data);
     while (client->connection && fn_data.done == 0)
@@ -59,11 +58,11 @@ char *request_get(const char *url) {
 
 static void request_callback(struct mg_connection *connection, int ev, void *ev_data, void *fn_data) {
     p_fn_data data = (p_fn_data)fn_data;
-    
     if (ev == MG_EV_CONNECT) {
         struct mg_str host = mg_url_host(data->url);
         if (mg_url_is_ssl(data->url)) {
-            struct mg_tls_opts opts = { .ca = data->client->configuration->vk_cfg->cert, .name = host };
+            // Select SSL certificate there.
+            struct mg_tls_opts opts = { .ca = "", .name = host };
             mg_tls_init(connection, &opts);
         }
         mg_printf(connection,

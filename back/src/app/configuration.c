@@ -23,10 +23,6 @@ typedef struct wrap_configuration_s {
     p_client_configuration client_configuration; // Client configuration.
     p_server_configuration server_configuration; // Server configuration.
 
-    struct configuration_s *(*open_cfg_file)(const char *path); // Open configuration file.
-    struct configuration_s *(*add_client_cfg)(void);            // Add VK API configuration.
-    struct configuration_s *(*add_server_cfg)(void);            // Add server configuration.
-
     char *raw_json_data;    // Raw data from configuration file.
     int raw_json_data_size; // Raw data size.
 } wrap_configuration_t, *p_wrap_configuration;
@@ -38,7 +34,7 @@ typedef struct wrap_configuration_s {
 /**
  * @brief Open configuration file.
  */
-static p_configuration open_cfg_file(void);
+static p_configuration open_cfg_file(p_wrap_configuration wrapped_cfg);
 
 /**
  * @brief Read raw JSON data from file.
@@ -49,18 +45,18 @@ static p_configuration open_cfg_file(void);
 static void read_raw_json_data(p_wrap_configuration wrapped_cfg, const char *path);
 
 /**
+ * @brief Release raw JSON data.
+ *
+ * @param wrapped_cfg Wrapped configuration object.
+ */
+static void release_raw_json_data(p_wrap_configuration wrapped_cfg);
+
+/**
  * @brief Add client configuration.
  *
  * @return Configuration object.
  */
-static p_configuration add_client_cfg(void);
-
-/**
- * @brief Add server configuration.
- *
- * @return Configuration object.
- */
-static p_configuration add_server_cfg(void);
+static p_configuration add_client_cfg(p_wrap_configuration wrapped_cfg);
 
 /**
  * @brief Read client configuration.
@@ -71,26 +67,26 @@ static p_configuration add_server_cfg(void);
 static p_client_configuration read_client_cfg(p_wrap_configuration wrapped_cfg);
 
 /**
+ * @brief Release VK API configuration.
+ *
+ * @param wrapped_cfg Wrapped configuration object.
+ */
+static void release_client_cfg(p_wrap_configuration wrapped_cfg);
+
+/**
+ * @brief Add server configuration.
+ *
+ * @return Configuration object.
+ */
+static p_configuration add_server_cfg(p_wrap_configuration wrapped_cfg);
+
+/**
  * @brief Read server configuration.
  *
  * @param wrapped_cfg Wrapped configuration object.
  * @return Server configuration object.
  */
 static p_server_configuration read_server_cfg(p_wrap_configuration wrapped_cfg);
-
-/**
- * @brief Release raw JSON data.
- *
- * @param wrapped_cfg Wrapped configuration object.
- */
-static void release_raw_json_data(p_wrap_configuration wrapped_cfg);
-
-/**
- * @brief Release VK API configuration.
- *
- * @param wrapped_cfg Wrapped configuration object.
- */
-static void release_client_cfg(p_wrap_configuration wrapped_cfg);
 
 /**
  * @brief Release server configuration.
@@ -105,21 +101,24 @@ static void release_server_cfg(p_wrap_configuration wrapped_cfg);
 
 p_configuration init_configuration(void) {
     p_wrap_configuration wrapped_cfg = (p_wrap_configuration)malloc(sizeof(wrap_configuration_t));
-
-    wrapped_cfg->client_configuration = NULL;
-    wrapped_cfg->server_configuration = NULL;
-    wrapped_cfg->open_cfg_file = open_cfg_file;
-    wrapped_cfg->add_client_cfg = add_client_cfg;
-    wrapped_cfg->add_server_cfg = add_server_cfg;
+    if (!wrapped_cfg)
+        return NULL;
+    
     wrapped_cfg->raw_json_data = NULL;
     wrapped_cfg->raw_json_data_size = 0;
+    open_cfg_file(wrapped_cfg);
+
+    wrapped_cfg->client_configuration = NULL;
+    add_client_cfg(wrapped_cfg);
+    
+    wrapped_cfg->server_configuration = NULL;
+    add_server_cfg(wrapped_cfg);
 
     return (p_configuration)wrapped_cfg;
 }
 
-p_configuration open_cfg_file(void) {
+p_configuration open_cfg_file(p_wrap_configuration wrapped_cfg) {
     p_container container = get_container(name_of(main));
-    p_wrap_configuration wrapped_cfg = get_service_from_container(container, name_of(p_configuration));
     const char *path = get_service_from_container(container, name_of(CONFIG_FILE_PATH));
 
     read_raw_json_data(wrapped_cfg, path);
@@ -139,8 +138,6 @@ void release_configuration(p_configuration cfg) {
     if (wrapped_cfg->raw_json_data)
         free(wrapped_cfg->raw_json_data);
     free(wrapped_cfg);
-
-    wrapped_cfg = NULL;
 }
 
 /***********************************************************************************************
@@ -152,19 +149,8 @@ static void read_raw_json_data(p_wrap_configuration wrapped_cfg, const char *pat
     wrapped_cfg->raw_json_data_size = strlen(wrapped_cfg->raw_json_data);
 }
 
-static p_configuration add_client_cfg(void) {
-    p_container container = get_container(name_of(main));
-    p_wrap_configuration wrapped_cfg = get_service_from_container(container, name_of(p_configuration));
-
+static p_configuration add_client_cfg(p_wrap_configuration wrapped_cfg) {
     wrapped_cfg->client_configuration = read_client_cfg(wrapped_cfg);
-    return (p_configuration)wrapped_cfg;
-}
-
-static p_configuration add_server_cfg(void) {
-    p_container container = get_container(name_of(main));
-    p_wrap_configuration wrapped_cfg = get_service_from_container(container, name_of(p_configuration));
-
-    wrapped_cfg->server_configuration = read_server_cfg(wrapped_cfg);
     return (p_configuration)wrapped_cfg;
 }
 
@@ -172,27 +158,25 @@ static p_client_configuration read_client_cfg(p_wrap_configuration wrapped_cfg) 
     p_client_configuration client_cfg = (p_client_configuration)malloc(sizeof(client_configuration_t));
     if (!client_cfg)
         return NULL;
-    client_cfg->vk_cfg = NULL;
 
     const char *path;
     json_scanf(wrapped_cfg->raw_json_data, wrapped_cfg->raw_json_data_size, "{CLIENT_SETTINGS:%Q}", &path);
     const char *json_client_data = json_fread(path);
     const int json_client_data_size = strlen(json_client_data);
 
-    client_cfg->vk_cfg = (p_vk_client_configuration)malloc(sizeof(vk_client_configuration_t));
-    if (client_cfg->vk_cfg) {
-        client_cfg->vk_cfg->url = NULL;
-        client_cfg->vk_cfg->cert = NULL;
+    // Client API configuration.
 
-        json_scanf(json_client_data, json_client_data_size, "{VK_API:{AUTHORIZE_URI:%Q}}", &client_cfg->vk_cfg->url);
-        json_scanf(json_client_data, json_client_data_size, "{VK_API:{ACCESS_CERTIFICATE:%Q}}", &client_cfg->vk_cfg->cert);
-    }
     if (path)
         free(path);
     if (json_client_data)
         free(json_client_data);
 
     return client_cfg;
+}
+
+static p_configuration add_server_cfg(p_wrap_configuration wrapped_cfg) {
+    wrapped_cfg->server_configuration = read_server_cfg(wrapped_cfg);
+    return (p_configuration)wrapped_cfg;
 }
 
 static p_server_configuration read_server_cfg(p_wrap_configuration wrapped_cfg) {
@@ -225,13 +209,8 @@ static void release_client_cfg(p_wrap_configuration wrapped_cfg) {
 
     p_client_configuration client_cfg = (p_client_configuration)wrapped_cfg->client_configuration;
     if (client_cfg) {
-        if (client_cfg->vk_cfg) {
-            if (client_cfg->vk_cfg->url)
-                free(client_cfg->vk_cfg->url);
-            if (client_cfg->vk_cfg->cert)
-                free(client_cfg->vk_cfg->cert);
-            free(client_cfg->vk_cfg);
-        }
+        // Release client API configuration.
+
         free(client_cfg);
         client_cfg = NULL;
     }

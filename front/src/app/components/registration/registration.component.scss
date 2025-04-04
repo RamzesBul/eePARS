@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex: 1;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+
+  width: 400px;
+}

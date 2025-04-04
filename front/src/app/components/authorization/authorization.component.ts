@@ -1,27 +1,50 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { CoreService, IUserProfile } from 'src/app/services/core.service';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { HttpService } from 'src/app/services/http.service';
+import { RouterService } from 'src/app/services/router.service';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
-  selector: 'app-authorization',
+  selector: 'authorization',
   templateUrl: './authorization.component.html',
-  styleUrls: ['./authorization.component.scss']
+  styleUrls: ['./authorization.component.scss'],
 })
-export class AuthorizationComponent {
-  public userInfo$: Observable<{ response: IUserProfile }> =
-    this.http.get<{ response: IUserProfile }>(`${this.coreService.applicationInfo['serverUrl']}/authorization`, {
-      params: {
-        'access_token': (() => {
-          const url: string = this.router.url;
-          const accessTokenStart: number = url.indexOf('access_token') + 'access_token'.length + 1;
-          const accessTokenEnd: number = url.indexOf('expires_in') - 1;
-
-          return url.substring(accessTokenStart, accessTokenEnd);
-        })()
+export class AuthorizationComponent implements OnInit {
+  private readonly httpService = inject(HttpService);
+  private readonly sessionService = inject(SessionService);
+  private readonly routerService = inject(RouterService);
+  
+  private readonly controllerUrl = 'authorization';
+  
+  protected readonly showLoader = signal<boolean>(true);
+  
+  protected login: string = '';
+  protected password: string = '';
+  
+  ngOnInit(): void {
+    this.showLoader.set(false);
+  }
+  
+  protected onLoginClick() {
+    this.showLoader.set(true);
+    
+    const body = {
+      login: this.login,
+      password: this.password
+    };
+    
+    this.httpService.makePost<string>(this.controllerUrl, body).subscribe({
+      next: (token) => {
+        this.sessionService.login(token);
+        this.routerService.reload();
+      },
+      error: (error) => {
+        console.error(error);
+        this.showLoader.set(false);
       }
     });
-
-  constructor(private http: HttpClient, private coreService: CoreService, private router: Router) { }
+  }
+  
+  protected onRegisterClick() {
+    this.routerService.navigate('/registration');
+  }
 }

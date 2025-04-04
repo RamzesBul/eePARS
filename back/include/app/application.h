@@ -13,13 +13,11 @@
  * @brief Application.
  */
 typedef struct application_s {
-    struct application_s *(*add_server_api)(void); // Add server.
-    struct application_s *(*add_client_api)(void); // Add client.
-    void (*run)(void);                             // Run application.
-
     p_configuration cfg; // Configuration.
     p_server server;     // Server.
     p_client client;     // Client.
+
+    void (*run)(void);                             // Run application.
 } application_t, *p_application;
 
 /*********************************************************************************************
